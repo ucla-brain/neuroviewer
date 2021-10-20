@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import Main from '@/components/Main'
 import test1 from '@/components/test1'
 import test2 from '@/components/test2'
 import test3 from '@/components/test3'
@@ -15,8 +15,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'Main',
+      component: Main
     },
     {
       path: '/test1',

@@ -20,9 +20,9 @@ new Vue({
            const r = new FileReader();
            r.onload = (e2) => {
              const swcTxt = e2.target.result;
-             const  swc = swcParser(swcTxt);
+             const swc = swcParser(swcTxt);
              if (Object.keys(swc).length > 0) {
-               s.loadNeuron('foo', '#ff0000', swc, true, false, true);
+               s.loadNeuron(f.name, null, swc, true, false, true);
                s.render();
              } else {
                alert("Please upload a valid swc file.");

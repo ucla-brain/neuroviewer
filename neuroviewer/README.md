@@ -27,4 +27,17 @@ npm run e2e
 npm test
 ```
 
+## Reflect on GitHub Pages
+``` bash
+# Modify config/index.js
+assetsPublicPath: '/neuroviewer',
+
+# build for production with minification
+npm run build
+
+# Push only the built files under /dist to subtree gh-pages to host on GitHub
+git subtree push --prefix neuroviewer/dist origin gh-pages
+
+```
+
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

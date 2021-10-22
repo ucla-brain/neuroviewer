@@ -6,22 +6,27 @@
       <input type='file' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
     </form>
     <div id="container" style='position:relative;width:100%;height:700px'></div>
+    <filelist :filenames="filenames"></filelist>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
 import SharkViewer, { swcParser } from '@janelia/sharkviewer'
+import filelist from '../components/filelist'
 
 export default {
+  components: { filelist },
   name: 'Main',
   data () {
     return {
-      msg: 'Welcome to Neuroviewer'
+      msg: 'Welcome to Neuroviewer',
+      filenames: []
     }
   },
   methods: {
     readSwcFile: function(e) {
+      this.filenames = [];
       for( let f of e.target.files ) {
          if (f) {
            const r = new FileReader();
@@ -31,13 +36,14 @@ export default {
              if (Object.keys(swc).length > 0) {
                s.loadNeuron(f.name, null, swc, true, false, true);
                s.render();
+               this.filenames.push(f.name);
              } else {
-               alert("Please upload a valid swc file.");
+               alert("Please upload a valid swc file. " + f.name);
              }
            };
            r.readAsText(f);
          } else {
-           alert("Failed to load file");
+           alert("Failed to load file " + f.name);
          }
        }      
     },

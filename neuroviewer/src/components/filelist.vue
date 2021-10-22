@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div>
       <label v-for="(item, index) in filenames" :key="index">{{ item }}</label>
-    </div>
   </div>
 </template>
 
@@ -16,4 +14,8 @@ export default {
 </script>
 
 <style scoped>
+div {
+    overflow: scroll;
+    height: 180px;
+} 
 </style>

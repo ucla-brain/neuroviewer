@@ -3,18 +3,65 @@
     <h1>{{ msg }}</h1>
     <form>
       <label for='swc_input'>Upload swc files to view them in the Neuroviewer:</label>
-      <input type='file' name='swc_input' id='swc_input' multiple/>
+      <input type='file' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
     </form>
     <div id="container" style='position:relative;width:100%;height:700px'></div>
   </div>
 </template>
 
 <script>
+/* eslint-disable */
+import SharkViewer, { swcParser } from '@janelia/sharkviewer'
+
 export default {
   name: 'Main',
   data () {
     return {
       msg: 'Welcome to Neuroviewer'
+    }
+  },
+  methods: {
+    readSwcFile: function(e) {
+      for( let f of e.target.files ) {
+         if (f) {
+           const r = new FileReader();
+           r.onload = (e2) => {
+             const swcTxt = e2.target.result;
+             const swc = swcParser(swcTxt);
+             if (Object.keys(swc).length > 0) {
+               s.loadNeuron(f.name, null, swc, true, false, true);
+               s.render();
+             } else {
+               alert("Please upload a valid swc file.");
+             }
+           };
+           r.readAsText(f);
+         } else {
+           alert("Failed to load file");
+         }
+       }      
+    },
+    window:onload = () => {
+      /* global sharkViewer */
+      let s = null;
+      let mdata;
+
+      const swc = swcParser(document.getElementById("swc").text);
+      mdata = JSON.parse(document.getElementById("metadata_swc").text);
+      s = new SharkViewer({
+        animated: false,
+        mode: 'particle',
+        dom_element: document.getElementById('container'),
+        metadata: mdata,
+        showAxes: 10000,
+        maxVolumeSize: 5000,
+        cameraChangeCallback: () => { }
+      });
+      window.s = s;
+      s.init();
+      s.animate();
+      s.loadNeuron('swc', null, swc, true, false, true);
+      s.render();
     }
   }
 }

@@ -1,6 +1,8 @@
 <template>
   <div>
-      <label v-for="(item, index) in filenames" :key="index">{{ item }}</label>
+      <ul class="list-group">
+        <li class="list-group-item" v-for="(item, index) in filenames" :key="index">Loaded ..... {{ item }}</li>
+      </ul>
   </div>
 </template>
 
@@ -14,8 +16,10 @@ export default {
 </script>
 
 <style scoped>
-div {
-    overflow: scroll;
-    height: 180px;
-} 
+.list-group{
+    max-height: 180px;
+    margin-bottom: 5px;
+    overflow:scroll;
+    -webkit-overflow-scrolling: touch;
+}
 </style>

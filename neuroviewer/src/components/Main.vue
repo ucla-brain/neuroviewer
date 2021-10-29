@@ -5,6 +5,7 @@
       <label for='swc_input'>Upload swc files to view them in the Neuroviewer:</label>
       <input type='file' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
     </form>
+    <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
     <div id="container" style='position:relative;width:100%;height:700px'></div>
     <filelist :filenames="filenames"></filelist>
   </div>
@@ -21,7 +22,8 @@ export default {
   data () {
     return {
       msg: 'Welcome to Neuroviewer',
-      filenames: []
+      filenames: [],
+      fileurl: 'https://github.com/ucla-brain/basalganglia/blob/master/static/files/SNr_reconstructions_Figure_1.swc'
     }
   },
   methods: {
@@ -68,6 +70,27 @@ export default {
       s.animate();
       s.loadNeuron('swc', null, swc, true, false, true);
       s.render();
+    },
+    readUrlFile: function(e) {
+      console.log(fileurl);
+      // CORS policy is blocking...
+      // fetch(this.fileurl)
+      //   .then(async response => {
+      //     const data = await response.json();
+
+      //     // check for error response
+      //     if (!response.ok) {
+      //       // get error message from body or default to response statusText
+      //       const error = (data && data.message) || response.statusText;
+      //       return Promise.reject(error);
+      //     }
+
+      //     this.totalVuePackages = data.total;
+      //   })
+      //   .catch(error => {
+      //     this.errorMessage = error;
+      //     console.error("There was an error!", error);
+      //   });      
     }
   }
 }
@@ -92,5 +115,9 @@ a {
 }
 label {
   margin-left: 10px;
+}
+input {
+  font-size: 14px;
+  margin-left: 3px;
 }
 </style>

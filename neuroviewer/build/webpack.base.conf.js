@@ -14,7 +14,7 @@ const createLintingRule = () => ({
   enforce: 'pre',
   include: [resolve('src'), resolve('test')],
   options: {
-    formatter: require('eslint-friendly-formatter'),
+    formatter: require('eslint-formatter-friendly'),
     emitWarning: !config.dev.showEslintErrorsInOverlay
   }
 })
@@ -22,7 +22,8 @@ const createLintingRule = () => ({
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
-    app: './src/main.js'
+    //app: './src/main.js'
+    entry: [path.resolve(__dirname, '../src/main.js')],
   },
   output: {
     path: config.build.assetsRoot,
@@ -40,11 +41,12 @@ module.exports = {
   },
   module: {
     rules: [
-      ...(config.dev.useEslint ? [createLintingRule()] : []),
+      //...(config.dev.useEslint ? [createLintingRule()] : []),
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueLoaderConfig
+        options: vueLoaderConfig,
+        include: [resolve('src')]
       },
       {
         test: /\.js$/,
@@ -52,12 +54,21 @@ module.exports = {
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
-        }
+        test: /\.(scss|css|sass)$/,
+        use: ['vue-style-loader',
+          {loader: 'css-loader', options: {sourceMap: true, importLoaders: 1}},
+        ],
+    },
+      // {
+      //   test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+      //   loader: 'url-loader',
+      //   options: {
+      //     limit: 10000,
+      //     name: utils.assetsPath('img/[name].[hash:7].[ext]')
+      //   }
+      // },
+      {
+        test: /\.(?:ico|gif|png|jpg|jpeg)$/i, type: 'asset/resource'
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
@@ -67,26 +78,39 @@ module.exports = {
           name: utils.assetsPath('media/[name].[hash:7].[ext]')
         }
       },
+      // {
+      //   test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+      //   loader: 'url-loader',
+      //   options: {
+      //     limit: 10000,
+      //     name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
+      //   }
+      // }
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
-        }
+        test: /\.(woff(2)?|eot|ttf|otf|svg|)$/, type: 'asset/inline'
       }
     ]
   },
-  node: {
-    // prevent webpack from injecting useless setImmediate polyfill because Vue
-    // source contains it (although only uses it if it's native).
-    setImmediate: false,
-    // prevent webpack from injecting mocks to Node native modules
-    // that does not make sense for the client
-    dgram: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty'
+  // node: {
+  //   prevent webpack from injecting useless setImmediate polyfill because Vue
+  //   source contains it (although only uses it if it's native).
+  //   setImmediate: false,
+  //   // prevent webpack from injecting mocks to Node native modules
+  //   // that does not make sense for the client
+  //   dgram: 'empty',
+  //   fs: 'empty',
+  //   net: 'empty',
+  //   tls: 'empty',
+  //   child_process: 'empty'
+  // }
+  resolve: {
+    fallback: {
+      setImmediate: false,
+      fs: false,
+      dgram: false,
+      net: false,
+      tls: false,
+      child_process: false
+    } 
   }
 }

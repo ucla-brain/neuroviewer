@@ -14,7 +14,7 @@
 <script>
 /* eslint-disable */
 import SharkViewer, { swcParser } from '@janelia/sharkviewer'
-import filelist from '../components/filelist'
+import filelist from '../components/filelist.vue'
 
 export default {
   components: { filelist },

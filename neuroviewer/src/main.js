@@ -14,10 +14,10 @@ import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 
 
 const app = createApp(App)
-console.log('test1')
+console.log('App is building...')
 app.use(router)
 app.use(BootstrapVue3)
-console.log('test2')
+console.log('App is being built using bootstrap-vue-3')
 app.mount('#app')
-console.log('app mounted')
+console.log('App successfully mounted')
 

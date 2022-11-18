@@ -3,10 +3,9 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
 
-import { createApp } from 'vue'; //for vue 3
+import { createApp } from 'vue';
 import BootstrapVue3 from 'bootstrap-vue-3'
 import router from './router'
-// Import Vue App, routes, store
 import App from './App.vue';
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';

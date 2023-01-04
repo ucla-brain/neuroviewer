@@ -118,7 +118,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // keep module.id stable when vendor modules does not change
     //new webpack.HashedModuleIdsPlugin(),
     // enable scope hoisting
-    new webpack.optimize.ModuleConcatenationPlugin(),
+    //new webpack.optimize.ModuleConcatenationPlugin(), 
     // split vendor js into its own file
     // new webpack.optimize.CommonsChunkPlugin({
     //   name: 'vendor',
@@ -157,7 +157,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
 
     // copy custom static assets
-    new CopyWebpackPlugin( //POSSIBLY REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    new CopyWebpackPlugin(
       {
         // from: path.resolve(__dirname, '../static'),
         // to: config.build.assetsSubDirectory,

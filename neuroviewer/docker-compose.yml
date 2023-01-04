@@ -1,0 +1,13 @@
+version: '3.7'
+
+networks:
+  local:
+
+services:
+    connectivity:
+        container_name: neuroviewer-app
+        build:
+                context: .
+                dockerfile: Dockerfile
+        ports:
+        - 3602:3602

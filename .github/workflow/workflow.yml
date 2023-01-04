@@ -54,7 +54,7 @@ jobs:
             sudo docker container rm ${{ env.DOCKER_CONTAINER }}
             sudo docker system prune -a -f
             sudo docker build -t ${{ env.DOCKER_IMAGE }} /home/mcpadmin/temp/neuroviewer/
-            # sudo docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 3000:80 -e TZ=America/Los_Angeles -v /src/connectivity-plot:/app --restart=always ${{ env.DOCKER_IMAGE }}
+            sudo docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 3602:3602 -e TZ=America/Los_Angeles -v /src/neuroviewer-app:/app --restart=always ${{ env.DOCKER_IMAGE }}
             # sudo docker container ls -a
 
   slack:

@@ -23,6 +23,7 @@ jobs:
         - name: Package neuroconnect
           if: always()
           run: |
+            cd ./neuroviewer
             npm install
             CI=false npm run build
 
@@ -34,7 +35,7 @@ jobs:
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
             source: "dist,Dockerfile,default.conf"            
-            target: "/home/mcpadmin/temp/neuroviewer"
+            target: "/home/mcpadmin/temp/neuroviewer/neuroviewer"
             rm: true
 
   deploy_neuroconnect:

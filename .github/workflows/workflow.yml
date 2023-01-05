@@ -35,7 +35,7 @@ jobs:
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
             source: "neuroviewer/dist,neuroviewer/Dockerfile,neuroviewer/default.conf"            
-            target: "/home/mcpadmin/temp/neuroviewer"
+            target: "$${{ secrets.BASE_DIR }}/temp/neuroviewer"
             strip_components: 1            
             rm: true
 
@@ -55,7 +55,7 @@ jobs:
             sudo docker container stop ${{ env.DOCKER_CONTAINER }}
             sudo docker container rm ${{ env.DOCKER_CONTAINER }}
             sudo docker system prune -a -f
-            sudo docker build -t ${{ env.DOCKER_IMAGE }} /home/mcpadmin/temp/neuroviewer/
+            sudo docker build -t ${{ env.DOCKER_IMAGE }} $${{ secrets.BASE_DIR }}/temp/neuroviewer/
             sudo docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 3602:3602 -e TZ=America/Los_Angeles -v /src/neuroviewer-app:/app --restart=always ${{ env.DOCKER_IMAGE }}
             # sudo docker container ls -a
 

@@ -11,6 +11,10 @@ This is a SPA written in Vue to visualize neuronal reconstruction files in a SWC
 
 2. Viewer loads the reconstructed neurons.
 
+## Public URL
+
+https://brain.neurobio.ucla.edu/neuroviewer/
+
 
 ## Copyrights
 

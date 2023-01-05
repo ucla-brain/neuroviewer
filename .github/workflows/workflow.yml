@@ -34,8 +34,9 @@ jobs:
             host: ${{ secrets.MAIN_HOST }}
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
-            source: "dist,Dockerfile,default.conf"            
-            target: "/home/mcpadmin/temp/neuroviewer/neuroviewer"
+            source: "neuroviewer/dist,neuroviewer/Dockerfile,neuroviewer/default.conf"            
+            target: "/home/mcpadmin/temp/neuroviewer"
+            strip_components: 1            
             rm: true
 
   deploy_neuroconnect:

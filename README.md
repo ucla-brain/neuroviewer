@@ -10,3 +10,10 @@ This is a SPA written in Vue to visualize neuronal reconstruction files in a SWC
 1. Clicke on the "Choose Files" button and select a single or multiple SWC files to upload.
 
 2. Viewer loads the reconstructed neurons.
+
+
+## Copyrights
+
+[![UCLA B.R.A.I.N.](http://brain.neurobio.ucla.edu/images/Logo%209-a2small.png)](http://brain.neurobio.ucla.edu/)
+
+[UCLA B.R.A.I.N.](http://brain.neurobio.ucla.edu/)

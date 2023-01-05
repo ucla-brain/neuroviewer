@@ -8,7 +8,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 const routes = [
   {
-    path: '/',
+    path: '/neuroviewer/',
     name: 'Main',
     component: Main
   },
@@ -29,7 +29,7 @@ const routes = [
   },
   {
     path: '/:catchAll(.*)',
-    redirect: '/' 
+    redirect: '/neuroviewer/' 
   }
 ]
 

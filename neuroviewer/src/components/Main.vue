@@ -2,7 +2,7 @@
   <div class="main">
     <h1>{{ msg }}</h1>
     <form>
-      <label for='swc_input'>Upload swc files to view them in the Neuroviewer:</label>
+      <label for='swc_input'>Upload .(eswc/swc) files to view them in the Neuroviewer:</label>
       <input type='file' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
@@ -27,21 +27,47 @@ export default {
     }
   },
   methods: {
+
+    eswcToSwc: function(src){
+      const headerLines = 3; 
+      const headers = ['n','type','x','y','z','radius','parent'];
+      let swcTxt = '';
+
+      //seperate each line of text
+      src = src.split('\n');
+
+      //only add contents of each line that correspond to new amount of headers
+      for (let index=headerLines; index<(src.length-1); index++){
+        let str = src[index].split(' ');
+        for (let header in headers){
+          swcTxt  = swcTxt.concat(str[header], ' ')
+          if (header==headers.length-1)
+            swcTxt = swcTxt.concat('\n')
+        }
+      }
+
+      //remove commas and update headers
+      swcTxt = swcTxt.replaceAll(',','')
+      swcTxt = '# ' + headers + '\n' + swcTxt
+      
+      return swcTxt;
+    },
+
     readSwcFile: function(e) {
       this.filenames = [];
       for( let f of e.target.files ) {
          if (f) {
-           const r = new FileReader();
-           r.onload = (e2) => {
-             const swcTxt = e2.target.result;
-             const swc = swcParser(swcTxt);
-             if (Object.keys(swc).length > 0) {
-               s.loadNeuron(f.name, null, swc, true, false, true);
-               s.render();
-               this.filenames.push(f.name);
-             } else {
-               alert("Please upload a valid swc file. " + f.name);
-             }
+          const r = new FileReader();
+          r.onload = (e2) => {
+            const swcTxt = f.name.includes('.eswc') ? this.eswcToSwc(e2.target.result) : e2.target.result;
+            const swc = swcParser(swcTxt);
+              if (Object.keys(swc).length > 0) {
+                s.loadNeuron(f.name, null, swc, true, false, true);
+                s.render();
+                this.filenames.push(f.name);
+              } else {
+                alert("Please upload a valid swc file. " + f.name);
+              }
            };
            r.readAsText(f);
          } else {

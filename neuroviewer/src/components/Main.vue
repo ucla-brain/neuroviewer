@@ -3,7 +3,7 @@
     <h1>{{ msg }}</h1>
     <form>
       <label for='swc_input'>Upload .(eswc/swc) files to view them in the Neuroviewer:</label>
-      <input type='file' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
+      <input type='file' accept='.eswc, .swc' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
     <div id="container" style='position:relative;width:100%;height:700px'></div>

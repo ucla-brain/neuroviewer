@@ -3,7 +3,8 @@
     <h1>{{ msg }}</h1>
     <form>
       <label for='swc_input'>Upload .(eswc/swc) files to view them in the Neuroviewer:</label>
-      <input type='file' accept='.eswc, .swc' @change="readSwcFile" name='swc_input' id='swc_input' multiple/>
+      <input type='file' accept='.eswc, .swc' @change="readSwcFile" ref='fileInput' name='swc_input' id='swc_input' multiple/><br/><br/>
+      <input type='button' value='Clear Data' v-show='clearBtn' @click='clearData'/>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
     <div id="container" style='position:relative;width:100%;height:700px'></div>
@@ -23,10 +24,20 @@ export default {
     return {
       msg: 'Welcome to Neuroviewer',
       filenames: [],
+      clearBtn: false,
       fileurl: 'https://github.com/ucla-brain/basalganglia/blob/master/static/files/SNr_reconstructions_Figure_1.swc'
     }
   },
   methods: {
+
+    clearData() {
+      for (let file in this.filenames){
+        s.unloadNeuron(this.filenames[file])
+      }
+      this.filenames = []
+      this.clearBtn = false
+      this.$refs.fileInput.value = ''
+    },
 
     eswcToSwc: function(src){
       const headerLines = 3; 
@@ -70,6 +81,7 @@ export default {
               }
            };
            r.readAsText(f);
+           this.clearBtn = true;
          } else {
            alert("Failed to load file " + f.name);
          }

@@ -1,7 +1,9 @@
 <template>
   <div>
       <ul class="list-group">
-        <li class="list-group-item" v-for="(item, index) in filenames" :key="index">Loaded ..... {{ item }} <button @click='funcCall(item)' v-if='multipleFiles()'>Select</button></li>
+        <li class="list-group-item" v-for="(item, index) in filenames" :key="index">Loaded ..... {{ item }} 
+          <button @click='toggleSwc(item, index)' v-if='multipleFiles()'>Select</button>
+        </li>
       </ul>
   </div>
 </template>
@@ -11,8 +13,18 @@
 export default {
   components: {},
   name: "filelist",
-  props: ['filenames'],
+  props:['fileData', 'filenames'],
   methods: {
+    toggleSwc: function(fileName, index) {
+      //unload all uploaded neurons
+      for (let file in this.filenames) {
+        s.unloadNeuron(this.filenames[file]);
+      }
+      //only load the selected neuron
+      s.loadNeuron(fileName, null, this.fileData[index].parsedSwc, true, false, true);
+      s.render();
+    },
+
     multipleFiles: function (){
       return (this.filenames.length > 1);
     }

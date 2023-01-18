@@ -7,8 +7,8 @@
       <input type='button' value='Clear Data' v-show='clearBtn' @click='clearData'/>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
-    <div id="container" style='position:relative;width:100%;height:700px'></div>
-    <filelist :filenames="filenames"></filelist>
+    <div id="container" style='position:relative; width:100%; height:700px'></div>
+    <filelist :fileData="fileData" :filenames="filenames"></filelist>
   </div>
 </template>
 
@@ -24,6 +24,7 @@ export default {
     return {
       msg: 'Welcome to Neuroviewer',
       filenames: [],
+      fileData: [],
       clearBtn: false,
       fileurl: 'https://github.com/ucla-brain/basalganglia/blob/master/static/files/SNr_reconstructions_Figure_1.swc'
     }
@@ -72,6 +73,7 @@ export default {
           r.onload = (e2) => {
             const swcTxt = f.name.includes('.eswc') ? this.eswcToSwc(e2.target.result) : e2.target.result;
             const swc = swcParser(swcTxt);
+            f.parsedSwc = swc;
               if (Object.keys(swc).length > 0) {
                 s.loadNeuron(f.name, null, swc, true, false, true);
                 s.render();
@@ -85,7 +87,8 @@ export default {
          } else {
            alert("Failed to load file " + f.name);
          }
-       }      
+       }    
+       this.fileData = e.target.files;  
     },
     window:onload = () => {
       /* global sharkViewer */

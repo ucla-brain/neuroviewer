@@ -110,11 +110,9 @@
           this.$emit('clear-data')
           let m = method.target.className;
           if (m.includes('file-clear')){
-            console.log('passed file btn check')
             this.$refs.fileInput.value = ''
           }
           else if (m.includes('git-clear')){
-            console.log('passed git url check')
             this.$refs.gitInput.value=  ''
           }
         },

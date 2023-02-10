@@ -11,11 +11,26 @@ import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 
+// Vuetify additions
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+
+const vuetify = createVuetify({
+    components,
+    directives,
+})
+
+// end
+
 
 const app = createApp(App)
 console.log('App is building...')
 app.use(router)
 app.use(BootstrapVue3)
+app.use(vuetify)
 console.log('App is being built using bootstrap-vue-3')
 app.mount('#app')
 console.log('App successfully mounted')

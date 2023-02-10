@@ -10,20 +10,15 @@ import App from './App.vue';
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
-
-// Vuetify additions
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-
 const vuetify = createVuetify({
     components,
     directives,
 })
-
-// end
 
 
 const app = createApp(App)

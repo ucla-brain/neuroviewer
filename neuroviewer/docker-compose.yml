@@ -5,9 +5,9 @@ networks:
 
 services:
     connectivity:
-        container_name: neuroviewer-dev-app
+        container_name: neuroviewer-app
         build:
                 context: .
                 dockerfile: Dockerfile
         ports:
-        - 3603:3603
+        - 3602:3602

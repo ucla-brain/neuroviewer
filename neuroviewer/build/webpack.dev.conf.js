@@ -93,7 +93,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     //   globOptions: { ignore: ['.*'],},},],}),
   ],
   watchOptions: {     //for no file watching size errors
-    ignored: ['../node_modules', '/docs/']
+    ignored: ['/docs/', '**/node_modules']
   },
 });
 

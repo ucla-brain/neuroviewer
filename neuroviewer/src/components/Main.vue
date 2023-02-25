@@ -10,6 +10,7 @@
         @files-added= '(event) => readSwcFile(event, null, null)'
         @url-added='(enteredVal) => readUrlFile(enteredVal)'
         @clear-data= 'clearData()'
+        @drive-file-added='(content, name) => readSwcFile(null, content, name)'
         :uploadMethod= 'this.uploadMethod' 
         :clearBtn= 'this.clearBtn'
         :urlVal= 'this.urlVal'>
@@ -18,7 +19,7 @@
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
     <div id="container" style='position:relative; width:100%; height:700px'> 
     </div>
-    <filelist :fileData="fileData" :filenames="filenames"></filelist>
+    <filelist :fileData="fileData" :filenames="filenames"></filelist> 
   </div>
 </template>
 
@@ -58,12 +59,16 @@ export default {
     },
 
     eswcToSwc: function(src){
-      const headerLines = 3; 
-      const headers = ['n','type','x','y','z','radius','parent'];
+      let headerLines = 0;
+      const headers = ['n','type','x','y','z','radius','parent']; //naming convention
       let swcTxt = '';
-
-      //seperate each line of text
       src = src.split('\n');
+
+      for (let i=0; i<10; i++){
+        if (src[i].includes('#')){
+          headerLines++;
+        }
+      }
 
       //only add contents of each line that correspond to new amount of headers
       for (let index=headerLines; index<(src.length-1); index++){
@@ -126,16 +131,23 @@ export default {
     async readUrlFile(enteredVal){
       //validate & parse user-entered URL
       this.filenames = []
+      // let url = this.urlVal;
       let url = enteredVal;
+      // console.log('entered url: '+url)
       
       if ((url.includes('github.com/')) && (url.length > 30)) {
 
         //extract URL info
         let repoOwner = url.split('github.com/')[1].split('/')[0]
         let repository = url.split(repoOwner + '/')[1].split('/')[0]
+        // console.log('owner: '+ repoOwner)
+        // console.log('repo: '+repository)
         let path = url.split(repository + '/blob/')[1]
+        // console.log('path snippet: '+path)
         let filePath = path.substring(path.indexOf('/')+1)
+        // console.log('filepath: '+ filePath)
         let fileName = filePath.substring((filePath.lastIndexOf('/'))+1)
+        // console.log('filename: '+ fileName)
 
         const octokit = new Octokit({
             auth: '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'

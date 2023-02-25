@@ -1,8 +1,12 @@
 <template>
   <div>
       <ul class="list-group">
-        <li class="list-group-item" v-for="(item, index) in filenames" :key="index">Loaded ..... {{ item }} 
-          <button @click='toggleSwc(item, index)' v-if='multipleFiles()'>Select</button>
+        <li class="list-group-item" v-for="(item, index) in filenames" :key="index">
+          Loaded ..... {{ item }} 
+          <label class='check-container'>
+            <input type='checkbox' class='check-btn'>
+          </label>
+          <button @click='toggleSwc(item, index)' v-if='multipleFiles()' class='sel-btn'>Select</button>
         </li>
       </ul>
   </div>
@@ -35,11 +39,20 @@ export default {
 <style scoped>
 .list-group{
     max-height: 180px;
+    max-width: 60vw;
     margin-bottom: 5px;
     overflow:scroll;
     -webkit-overflow-scrolling: touch;
 }
-
+.sel-btn{
+  position: absolute;
+  right: 0;
+}
+.check-btn{
+  position: absolute;
+  right: 8%;
+  bottom: 30%;
+}
 /* Style for consistency */
 button {
   background-image: linear-gradient(#f7f8fa ,#e7e9ec);

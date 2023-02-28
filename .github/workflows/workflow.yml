@@ -25,6 +25,8 @@ jobs:
           run: |
             cd ./neuroviewer
             npm install
+            sed -i 's/<API-KEY-VALUE>/${{ secrets.DRIVE_API_KEY }}/g' src/credentials/keys.txt
+            sed -i 's/<CLIENT-ID-VALUE>/${{ secrets.DRIVE_CLIENT_ID }}/g' src/credentials/keys.txt
             CI=false npm run build
 
         - name: scp build files to main host

@@ -6,5 +6,4 @@ module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
   API_KEY: '"<DRIVE_API_KEY>"',
   CLIENT_ID: '"<DRIVE_CLIENT_ID>"',
-  GIT_TOKEN: '"<GITHUB_ACCESS_TOKEN>"'
 })

@@ -26,6 +26,15 @@ npm run e2e
 # run all tests
 npm test
 ```
+### To use  github neuron uploading in a build
+- Navigate to 'Settings > Developer Settings'
+
+	#### GitHub Access Token
+	- Select 'Personal Access Tokens > Tokens (classic)'
+	- Generate and save your new access token
+
+- Replace *<GITHUB_ACCESS_TOKEN>* with the access token located in the *dev.env* file under *config/* and run the build.
+
 ### To use  google-drive neuron uploading in a build
 - Navigate to [Google Developer Console](https://console.cloud.google.com/) and [create a new project](https://developers.google.com/workspace/guides/create-project) if you don't already have one
 - Enable 'Google Drive API' under 'APIs & Services > Enabled APIs & Services'
@@ -39,7 +48,7 @@ npm test
 	- Enter settings for your application and add the authorized domain for your build. 
 	- When complete, save your Client ID
 
-- Replace *<DRIVE_API_KEY>* and *<DRIVE_CLIENT_ID>* with these two keys located in the *api-keys.env* file under *config/* and run the build.
+- Replace *<DRIVE_API_KEY>* and *<DRIVE_CLIENT_ID>* with these two keys located in the *dev.env* file under *config/* and run the build.
 
 ## Reflect on GitHub Pages
 ``` bash

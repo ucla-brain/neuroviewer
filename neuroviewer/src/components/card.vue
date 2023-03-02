@@ -138,7 +138,6 @@
 </template>
 
 <script>
-import credentials from '../credentials/keys.txt';
 import Popper from 'vue3-popper';
 let API_KEY = ''
 let CLIENT_ID = ''
@@ -163,13 +162,8 @@ export default {
   mounted() {    
 
     function initializeAPIGlobals(){
-      let apikey = credentials.split('\n')[0]
-      apikey = apikey.split('API_KEY: ')[1]
-      let clientid = credentials.split('\n')[1]
-      clientid = clientid.split('CLIENT_ID: ')[1]
-      
-      API_KEY = apikey
-      CLIENT_ID = clientid
+      API_KEY = process.env.API_KEY
+      CLIENT_ID = process.env.CLIENT_ID
     }
 
     function initializeAPIScripts() {

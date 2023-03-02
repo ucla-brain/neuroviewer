@@ -39,7 +39,7 @@ npm test
 	- Enter settings for your application and add the authorized domain for your build. 
 	- When complete, save your Client ID
 
-- Replace *<DRIVE_API_KEY>* and *<DRIVE_CLIENT_ID>* with these two keys located in the *keys.txt* file under *src/credentials/* and run the build.
+- Replace *<DRIVE_API_KEY>* and *<DRIVE_CLIENT_ID>* with these two keys located in the *api-keys.env* file under *config/* and run the build.
 
 ## Reflect on GitHub Pages
 ``` bash

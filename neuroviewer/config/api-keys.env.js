@@ -1,6 +1,6 @@
 'use strict'
 
 module.exports = {
-    API_KEY: '"<API-KEY-VALUE>"',
-    CLIENT_ID: '"<CLIENT-ID-VALUE>"'
+    API_KEY: '"<DRIVE_API_KEY>"',
+    CLIENT_ID: '"<DRIVE_CLIENT-ID>"'
 }

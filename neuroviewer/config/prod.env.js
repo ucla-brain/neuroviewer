@@ -1,8 +1,8 @@
 'use strict'
 const { merge } = require('webpack-merge')
-const apiKeys = require('./api-keys.env')
-
 
 module.exports = merge(apiKeys, {
-  NODE_ENV: '"production"'
+  NODE_ENV: '"production"',
+  API_KEY: '"<DRIVE_API_KEY>"',
+  CLIENT_ID: '"<DRIVE_CLIENT-ID>"'
 })

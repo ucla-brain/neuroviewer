@@ -9,6 +9,7 @@
       <Card 
         @files-added= '(event) => readSwcFile(event, null, null)'
         @url-added='(enteredVal) => readUrlFile(enteredVal)'
+        @read-swc-file='(content, name) => readSwcFile(null, content,name)'
         @clear-data= 'clearData()'
         @drive-file-added='(content, name) => readSwcFile(null, content, name)'
         :uploadMethod= 'this.uploadMethod' 
@@ -141,12 +142,9 @@ export default {
         let path = url.split(repository + '/blob/')[1]
         let filePath = path.substring(path.indexOf('/')+1)
         let fileName = filePath.substring((filePath.lastIndexOf('/'))+1)
+      
 
-        const octokit = new Octokit({
-            auth: process.env.GIT_TOKEN
-        });
-
-        const gitData = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}',{
+        const gitData = await Octokit.request('GET /repos/{owner}/{repo}/contents/{path}',{
           owner: repoOwner,
           repo: repository,
           path: filePath

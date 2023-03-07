@@ -102,7 +102,7 @@
     </span>
     <span class='row'>
       <label class='cell' for='url_input'>Enter Google Drive URL: </label>
-      <input class='cell url-input' type='url' placeholder="https://drive.google.com/file/file-ID" pattern="https?://.+" :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" :disabled="!isAuthenticated" required name='url_input' v-model='urlVal' id='url_input' @change='checkURL'/> 
+      <input class='cell url-input' type='url' placeholder="https://drive.google.com/file/file-ID" pattern="https?://.+" :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" :disabled="!isAuthenticated" required name='url_input' v-model='urlVal' id='url_input' @change='checkDriveURL'/> 
     </span>
       <input class='clear-btn' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
     <Popper>
@@ -353,18 +353,50 @@ export default {
       }
     },
 
-    checkURL(event) {
+    async driveFolderSearch(folderId){
+      let files = undefined
+      let requestFolder = await api.client.drive.files.list({
+        q: `'${folderId}' in parents`,
+        fields: '*'
+      })
+      .then((response) => {
+        files = response.result.files
+        if (files.length > 0) {
+          for (let el of files){
+          //if a folder, do a recursion, else if a swc file, display it
+            if (el.fileExtension){
+              if (el.fileExtension.includes('swc')){
+                this.fileDataRetrieval(el.id)
+              }
+            }else if (el.mimeType.includes('folder')) {
+              //get id and call this func with it
+              this.driveFolderSearch(el.id)
+            }
+            else { //for non-swc
+              // console.log('non-supported file: ' + el.name)
+            }
+          }
+        }
+      })
+    },
+
+    checkDriveURL(event) {
       let url = event.target.value;
       let fileId = '';
+      let folderId = '';
 
       //check that url is valid
       if (url.includes('https://drive.google.com/')){
-        //if so, parse and snip to get fileID
-        fileId = url.split('/d/')[1]
-        if (fileId.includes('/')){ 
-          fileId = fileId.split('/')[0]
+        if (url.includes('/d/')){
+          fileId = url.split('/d/')[1]
+        }else {
+          folderId = url.split('/folders/')[1]
+          if (folderId.includes('?usp')){
+            folderId = folderId.split('?usp')[0]
+          }
+
+          this.driveFolderSearch(folderId)
         }
-        this.fileDataRetrieval(fileId)
       } else {
         alert('Please enter valid google drive URL')
       }

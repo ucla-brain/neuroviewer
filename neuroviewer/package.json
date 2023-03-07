@@ -19,6 +19,7 @@
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "@janelia/sharkviewer": "^1.7.10",
+    "@octokit/core": "^4.2.0",
     "bootstrap-vue": "^2.22.0",
     "bootstrap-vue-3": "^0.1.21",
     "buffer": "^6.0.3",
@@ -50,7 +51,6 @@
     "mini-css-extract-plugin": "^2.6.1",
     "ora": "^1.2.0",
     "portfinder": "^1.0.28",
-    "raw-loader": "^4.0.2",
     "shelljs": "^0.8.5",
     "terser-webpack-plugin": "^5.3.3",
     "uglify-js": "^3.16.3",

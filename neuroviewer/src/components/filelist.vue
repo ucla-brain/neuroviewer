@@ -3,10 +3,10 @@
       <ul class="list-group">
         <li class="list-group-item" v-for="(item, index) in filenames" :key="index">
           Loaded ..... {{ item }} 
-          <label class='check-container'>
+          <!-- <label class='check-container'>
             <input type='checkbox' class='check-btn'>
-          </label>
-          <button @click='toggleSwc(item, index)' v-if='multipleFiles()' class='sel-btn'>Select</button>
+          </label> -->
+          <!-- <button @click='toggleSwc(item, index)' v-if='multipleFiles()' class='sel-btn'>Select</button> -->
         </li>
       </ul>
   </div>
@@ -50,7 +50,7 @@ export default {
 }
 .check-btn{
   position: absolute;
-  right: 8%;
+  right: 2%;
   bottom: 30%;
 }
 /* Style for consistency */

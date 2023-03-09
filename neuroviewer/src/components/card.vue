@@ -104,6 +104,7 @@
       <label class='cell' for='url_input'>Enter Google Drive URL: </label>
       <input class='cell url-input' type='url' placeholder="https://drive.google.com/file/file-ID" pattern="https?://.+" :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" :disabled="!isAuthenticated" required name='url_input' v-model='urlVal' id='url_input' @change='checkDriveURL'/> 
     </span>
+      <!-- <input type='button' value='Search' class='clear-btn'/> -->
       <input class='clear-btn' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
     <Popper>
       <label><a href='#'>Need help?</a><br/></label>
@@ -120,7 +121,8 @@
                     <p>Steps to view Google-Drive file(s): </p>
                     <li>1. Allow Neuroviewer access of your Google Drive by clicking 'Authorize'</li><br/>
                     <li>2. Sign in to your '<i>g.ucla.edu</i>' acount, then select 'continue'</li><br/>
-                    <li>3. Enter a Google Drive URL and view </li><br/>
+                    <li>3. Get the file/folder link from the Google Drive file or folder by selecting 'get link > Copy link'</li><br/>
+                    <li>4. Paste the link in the '<i>Drive URL</i>' to view</li>
                   </ol> 
                 </div>
               </v-expansion-panel-text>
@@ -353,28 +355,57 @@ export default {
       }
     },
 
-    async driveFolderSearch(folderId){
+    async fileDataRetrieval(fileId) {
+      let fileName = '';
+      let fileContents = '';
+      let fileCheckArr = [];
+        try{
+          const requestName = await api.client.drive.files.get({
+            fileId: fileId,
+            fields: 'name',
+          }).then(function (response) {
+            fileName = response.result.name;
+          })
+          const requestFileContent = await api.client.drive.files.get({
+            fileId: fileId,
+            alt: 'media'
+          }).then(function (response) {
+            fileContents = response.body
+          })
+          fileCheckArr = fileContents.split('\n')
+          if (fileCheckArr.length < 5){
+            console.log('The following file has invalid contents: ' + fileName)
+          } else {
+            this.driveFileUploaded(fileContents, fileName)
+          }
+        } catch (e) {
+          console.error('Error getting files', e)
+          }
+    },
+
+    async driveFolderSearch(folderId, nextPageToken){
       let files = undefined
       let requestFolder = await api.client.drive.files.list({
         q: `'${folderId}' in parents`,
-        fields: '*'
+        fields: '*',
+        pageToken: nextPageToken ? nextPageToken : null
       })
       .then((response) => {
+        //If folder's content size is 100+, paginate
+        if (response.result.nextPageToken){ 
+          this.driveFolderSearch(folderId, response.result.nextPageToken)
+          //TODO: add a non-invasive promopt to the user that performance issue of the viewer may be affected 
+        }
         files = response.result.files
-        if (files.length > 0) {
-          for (let el of files){
-          //if a folder, do a recursion, else if a swc file, display it
-            if (el.fileExtension){
-              if (el.fileExtension.includes('swc')){
-                this.fileDataRetrieval(el.id)
-              }
-            }else if (el.mimeType.includes('folder')) {
-              //get id and call this func with it
-              this.driveFolderSearch(el.id)
+        for (let el of files){
+          if (el.fileExtension){ 
+            //case: folder content is a (e)swc file
+            if (el.fileExtension.includes('swc')){
+              this.fileDataRetrieval(el.id)
             }
-            else { //for non-swc
-              // console.log('non-supported file: ' + el.name)
-            }
+          }else if (el.mimeType.includes('folder')) {
+            //case: folder content is another folder
+            this.driveFolderSearch(el.id, null)
           }
         }
       })
@@ -385,53 +416,29 @@ export default {
       let fileId = '';
       let folderId = '';
 
-      //check that url is valid
       if (url.includes('https://drive.google.com/')){
+
         if (url.includes('/d/')){
           fileId = url.split('/d/')[1]
-        }else {
-          folderId = url.split('/folders/')[1]
-          if (folderId.includes('?usp')){
-            folderId = folderId.split('?usp')[0]
+          //removal of common substring for file share links
+          if (fileId.includes('/')){ 
+            fileId = fileId.split('/')[0]
           }
+          this.fileDataRetrieval(fileId)
 
-          this.driveFolderSearch(folderId)
+        }else if (url.includes('/folders/')){
+          folderId = url.split('/folders/')[1]
+          //removal of common substring for folder share links
+          if (folderId.includes('?')){ 
+            folderId = folderId.split('?')[0]
+          }
+          this.driveFolderSearch(folderId, null)
+        } else {
+          alert('Please enter valid google drive URL')
         }
+
       } else {
         alert('Please enter valid google drive URL')
-      }
-    },
-
-
-    async fileDataRetrieval(fileId) {
-      let fileName = '';
-      let fileContents = '';
-      let fileCheckArr = [];
-
-      try{
-        const requestName = await api.client.drive.files.get({
-          fileId: fileId,
-          fields: 'name',
-        }).then(function (response) {
-          fileName = response.result.name;
-        })
-        const requestFileContent = await api.client.drive.files.get({
-          fileId: fileId,
-          alt: 'media'
-        }).then(function (response) {
-          fileContents = response.body
-        })
-
-        fileCheckArr = fileContents.split('\n')
-        if (fileCheckArr.length < 5){ // ensuring the file isn't only header comments
-          alert('The file has invalid contents. Please ensure file is a valid eswc/swc file')
-        } else {
-          //display valid file to the viewer
-          this.driveFileUploaded(fileContents, fileName)
-        }
-      } catch (e) {
-        console.error('Error getting files', e)
-        alert('Error, please authenticate Neuroviewer with Google Drive Access to view drive files in the Neuroviewer')
       }
     },
 

@@ -38,10 +38,13 @@ export default {
 
 <style scoped>
 .list-group{
-    max-height: 180px;
+    max-height: 70vh;
     max-width: 60vw;
-    margin-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 30px;
     overflow:scroll;
+    margin-left: auto;
+    margin-right: auto;
     -webkit-overflow-scrolling: touch;
 }
 .sel-btn{

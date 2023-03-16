@@ -12,15 +12,20 @@
         @read-swc-file='(content, name) => readSwcFile(null, content,name)'
         @clear-data= 'clearData()'
         @drive-file-added='(content, name) => readSwcFile(null, content, name)'
-        :uploadMethod= 'this.uploadMethod' 
-        :clearBtn= 'this.clearBtn'
-        :urlVal= 'this.urlVal'>
+        :uploadMethod= 'uploadMethod' 
+        :errored-file-names='erroredFileNames'
+        :clearBtn= 'clearBtn'
+        :urlVal= 'urlVal'>
       </Card>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
     <div id="container" style='position:relative; width:100%; height:700px'> 
     </div>
-    <filelist :fileData="fileData" :filenames="filenames"></filelist> 
+    <filelist 
+      :fileData="fileData" 
+      :filenames="filenames"
+      :erroredFileNames="erroredFileNames">
+    </filelist> 
   </div>
 </template>
 
@@ -44,6 +49,7 @@ export default {
       urlVal: '',
       uploadMethod: '',
       fileinput: '',
+      erroredFileNames: [],
       clearBtn: false,
       fileurl: 'https://github.com/ucla-brain/basalganglia/blob/master/static/files/SNr_reconstructions_Figure_1.swc',
     }
@@ -56,6 +62,7 @@ export default {
       }
       this.urlVal = ''
       this.filenames = []
+      this.erroredFileNames = []
       this.clearBtn = false
     },
 
@@ -112,7 +119,8 @@ export default {
         s.render();
         this.filenames.push(name);
       } else {
-        alert("Please upload a valid swc file. " + name);
+        let errorMsg = 'Invalid file contents'
+        this.erroredFileNames.push({name: name, error: errorMsg})
       }
       this.clearBtn = true;
     },
@@ -228,5 +236,8 @@ label {
 .icon{
   width: 20px;
   margin-left: 10px;
+}
+#container {
+  margin-top: 10px;
 }
 </style>

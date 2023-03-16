@@ -185,7 +185,7 @@ export default {
   emits: ['files-added', 'url-added', 'drive-file-added', 'clear-data', 'read-swc-file'],
   components: { Popper },
   name: "filelist",
-  props:['uploadMethod', 'clearBtn', 'urlVal'],
+  props:['uploadMethod', 'clearBtn', 'urlVal', 'erroredFileNames'],
   data (){
       return{
         //refers to google-drive
@@ -261,7 +261,6 @@ export default {
       let urlVal  = enteredUrl.target.value
       let result = urlVal.replace(/^\s+|\s+$/gm,'');
       this.readUrlFile(result)
-      // this.$emit('url-added', enteredUrl.target.value)
     },
 
     driveFileUploaded(content, name){
@@ -303,13 +302,11 @@ export default {
           repo: 'hello-world'
         }).then((response) => {
           let stat = response.status;
-          // this.tokenEntered = true;
           if (stat === 200){
             this.tokenValid = true;
           }
         });
       } catch {
-        // this.tokenEntered = true;
 
         //to handle many attempts
         this.tokenValid = false;
@@ -374,13 +371,14 @@ export default {
           })
           fileCheckArr = fileContents.split('\n')
           if (fileCheckArr.length < 5){
-            console.log('The following file has invalid contents: ' + fileName)
+            let errorMsg = 'Invalid file contents'
+            this.erroredFileNames.push({name: fileName, error: errorMsg})
           } else {
             this.driveFileUploaded(fileContents, fileName)
           }
         } catch (e) {
-          console.error('Error getting files', e)
-          }
+          alert(e)
+        }
     },
 
     async driveFolderSearch(folderId, nextPageToken){
@@ -394,7 +392,6 @@ export default {
         //If folder's content size is 100+, paginate
         if (response.result.nextPageToken){ 
           this.driveFolderSearch(folderId, response.result.nextPageToken)
-          //TODO: add a non-invasive promopt to the user that performance issue of the viewer may be affected 
         }
         files = response.result.files
         for (let el of files){
@@ -551,8 +548,5 @@ video {
   top: 9%;
   font-size: 1.check
 }
-/* input::placeholder{
-  color: red
-} */
 </style>
   

@@ -12,15 +12,20 @@
         @read-swc-file='(content, name) => readSwcFile(null, content,name)'
         @clear-data= 'clearData()'
         @drive-file-added='(content, name) => readSwcFile(null, content, name)'
-        :uploadMethod= 'this.uploadMethod' 
-        :clearBtn= 'this.clearBtn'
-        :urlVal= 'this.urlVal'>
+        :uploadMethod= 'uploadMethod' 
+        :errored-file-names='erroredFileNames'
+        :clearBtn= 'clearBtn'
+        :urlVal= 'urlVal'>
       </Card>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
     <div id="container" style='position:relative; width:100%; height:700px'> 
     </div>
-    <filelist :fileData="fileData" :filenames="filenames"></filelist> 
+    <filelist 
+      :fileData="fileData" 
+      :filenames="filenames"
+      :erroredFileNames="erroredFileNames">
+    </filelist> 
   </div>
 </template>
 
@@ -44,6 +49,7 @@ export default {
       urlVal: '',
       uploadMethod: '',
       fileinput: '',
+      erroredFileNames: [],
       clearBtn: false,
       fileurl: 'https://github.com/ucla-brain/basalganglia/blob/master/static/files/SNr_reconstructions_Figure_1.swc',
     }
@@ -56,35 +62,52 @@ export default {
       }
       this.urlVal = ''
       this.filenames = []
+      this.erroredFileNames = []
       this.clearBtn = false
     },
 
     eswcToSwc: function(src){
-      let headerLines = 0;
-      const headers = ['n','type','x','y','z','radius','parent']; //naming convention
+      //vars
+      const headerRange = 7; //default header values amount for swc files
+      let header = '';
+      let header_lines = [];
       let swcTxt = '';
-      src = src.split('\n');
 
-      for (let i=0; i<10; i++){
+      //header retrieval
+      src = src.split('\n');
+      for (let i=0; i<src.length; i++){
         if (src[i].includes('#')){
-          headerLines++;
+          header_lines.push(src[i].split('#').pop())
+          if (header_lines[i].includes(',')){
+            header_lines[i] = header_lines[i].replaceAll(',', ' ')
+          }
         }
       }
+      header = header_lines[header_lines.length-1].split(' ')
+      if (header[0] === '') {
+        header = header.slice(1, headerRange+1)
+      } else if (header[0] === 'n') {
+        header = header.slice(0, headerRange)
+      }
 
-      //only add contents of each line that correspond to new amount of headers
-      for (let index=headerLines; index<(src.length-1); index++){
+      //only add contents of each line that correspond to swc headers 
+      for (let index=header_lines.length; index<(src.length-1); index++){
         let str = src[index].split(' ');
-        for (let header in headers){
-          swcTxt  = swcTxt.concat(str[header], ' ')
-          if (header==headers.length-1)
+        //rewrite parent value if needed
+        if ((index == header_lines.length) && (str[6] === '0')){
+          str[6] = '-1'
+        }
+        for (let word in header){
+          swcTxt  = swcTxt.concat(str[word], ' ')
+          if (word==header.length-1)
             swcTxt = swcTxt.concat('\n')
         }
       }
 
       //remove commas and update headers
-      swcTxt = swcTxt.replaceAll(',','')
-      swcTxt = '# ' + headers + '\n' + swcTxt
-      
+      swcTxt = '# ' + header + '\n' + swcTxt
+      swcTxt = swcTxt.replaceAll(',',' ')
+
       return swcTxt;
     },
 
@@ -96,7 +119,8 @@ export default {
         s.render();
         this.filenames.push(name);
       } else {
-        alert("Please upload a valid swc file. " + name);
+        let errorMsg = 'Invalid file contents'
+        this.erroredFileNames.push({name: name, error: errorMsg})
       }
       this.clearBtn = true;
     },
@@ -212,5 +236,8 @@ label {
 .icon{
   width: 20px;
   margin-left: 10px;
+}
+form {
+  padding-bottom: 20px;
 }
 </style>

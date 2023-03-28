@@ -237,7 +237,7 @@ label {
   width: 20px;
   margin-left: 10px;
 }
-#container {
-  margin-top: 10px;
+form {
+  padding-bottom: 20px;
 }
 </style>

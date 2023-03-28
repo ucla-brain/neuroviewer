@@ -454,8 +454,8 @@ export default {
   width: 41vw;
   max-width: 600px;
   border-radius: 8px;
-  border: 1px solid rgba(33,37,41,255);
-  box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.5);
+  border: 1px solid gray;
+  box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
   position: absolute;
   z-index: 1;
   background-color: white;
@@ -488,6 +488,7 @@ export default {
   margin: 0 10px 3px 3px;
   border: 1px solid rgb(104, 104, 104);
   border-radius: 3px;
+  color: black;
 }
 #content{
   margin-top: 10px;

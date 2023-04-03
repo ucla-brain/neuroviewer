@@ -36,7 +36,7 @@
       <v-window v-model="tabIndex" class="vwindow" v-if="filesUploaded"> 
         <v-window-item :value="1" :key="1">
           <v-card>
-            <ul class="list-group" v-if="erroredFileNames.length">
+            <ul class="list-group" v-if="filteredValidList.length">
               <li class="list-group-item" v-for="(item, index) in filteredValidList" :key="index" >
                 Loaded ..... {{ item }} 
                 <label class='check-container'>
@@ -90,7 +90,7 @@ export default {
 
       //none entered: everything stays as is
       if (!filter.length){
-          return this.filenames
+        return this.filenames
       } 
 
       //entered file is in successful list
@@ -142,8 +142,9 @@ export default {
       }
       return false
     },
+
     filesUploaded(){
-      if (this.filenames.length > 0){
+      if ((this.filenames.length > 0) || (this.erroredFileNames.length > 0)){
         return true
       }
       return false;

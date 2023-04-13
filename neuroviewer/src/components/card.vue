@@ -4,7 +4,7 @@
   <div class='method-card' v-if='uploadMethod==="file"'>
       <span class='row'>
         <label class='cell' for='swc_input'>Upload <i>.swc</i> or <i>.eswc</i> file(s) directly to viewer: </label>
-        <input class='file-input' type='file' ref='fileInput' accept='.eswc, .swc' @change="filesUploaded"  name='swc_input' id='swc_input' multiple/>
+        <input class='file-input' type='file' ref='fileInput' @click="clearPress" accept='.eswc, .swc' @change="filesUploaded"  name='swc_input' id='swc_input' multiple/>
         <!-- <br/><br/> -->
       </span>
       <input class='clear-btn file-clear' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
@@ -102,10 +102,9 @@
     </span>
     <span class='row'>
       <label class='cell' for='url_input'>Enter Google Drive URL: </label>
-      <input class='cell url-input' type='url' placeholder="https://drive.google.com/file/file-ID" pattern="https?://.+" :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" :disabled="!isAuthenticated" required name='url_input' v-model='urlVal' id='url_input' @change='checkDriveURL'/> 
+      <input class='cell url-input' type='url' ref='driveInput' placeholder="https://drive.google.com/file/file-ID" pattern="https?://.+" :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" :disabled="!isAuthenticated" required name='url_input' v-model='urlVal' id='url_input' @change='checkDriveURL'/> 
     </span>
-      <!-- <input type='button' value='Search' class='clear-btn'/> -->
-      <input class='clear-btn' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
+      <input class='clear-btn drive-clear' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
     <Popper>
       <label><a href='#'>Need help?</a><br/></label>
       <template #content>
@@ -269,12 +268,21 @@ export default {
 
     clearPress(method) {
       this.$emit('clear-data')
+      let swcInput = document.getElementById('swc_input')
       let m = method.target.className;
+
+      // consider replacing the below with a switch case:
       if (m.includes('file-clear')){
         this.$refs.fileInput.value = ''
       }
       else if (m.includes('git-clear')){
-        this.$refs.gitInput.value=  ''
+        this.$refs.gitInput.value =  ''
+      }
+      else if (m.includes('drive-clear')){
+        this.$refs.driveInput.value = ''
+      }
+      else {
+        swcInput.value=''
       }
     },
 

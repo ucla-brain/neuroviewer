@@ -9,11 +9,8 @@
         </Popper>
         <v-icon icon="mdi-close" class="clearIcon" @click="clearVal" v-if="filterVal.length"></v-icon>
         <input type="search" class="searchBar" list="filesList" v-model="filterVal" placeholder="Filter files by name or path">
-        <!-- <datalist id="filesList" class="datalist">
-            <option v-for="file in filteredFiles" class="datalist">{{ file.name ? file.name : file }}</option>
-        </datalist> -->
       </div>
-      
+
       <div class="tab-bar list-group" v-if="filesUploaded">
         <v-tabs
           class="v-tabs"
@@ -24,6 +21,9 @@
               Uploaded Files
               <v-icon icon="mdi-file-check"></v-icon>
               [<span class="successful-files-count">{{ filteredValidList.length }}</span>]
+              <div class="form-check form-switch">
+                    <input class="form-check-input toggleAll" type="checkbox" role="switch" id="flexSwitchCheckChecked" @click="handleToggle(null, null, $event)" checked>
+              </div>
             </v-tab>
             <v-tab :value="2" :key="2" class="v-tab">
               Errors
@@ -36,12 +36,15 @@
       <v-window v-model="tabIndex" class="vwindow" v-if="filesUploaded"> 
         <v-window-item :value="1" :key="1">
           <v-card>
-            <ul class="list-group" v-if="erroredFileNames.length">
-              <li class="list-group-item" v-for="(item, index) in filteredValidList" :key="index" >
-                Loaded ..... {{ item }} 
-                <label class='check-container'>
-                </label>
-              </li>
+            <ul class="list-group" v-if="filteredValidList.length">
+             <li class="list-group-item" v-for="(item, index) in filteredValidList" :key="index" >
+              <div class="form-check form-switch">
+                <span class="valid-list">
+                  Loaded ..... {{ item }} 
+                </span>
+                <input class="form-check-input fileToggle" type="checkbox" role="switch" id="flexSwitchCheckChecked"  @click="handleToggle($event, item, null)" checked>
+              </div>
+            </li>
             </ul>
           </v-card>
         </v-window-item>
@@ -51,8 +54,6 @@
               <li class="list-group-item" v-for="(item, index) in filteredErrorsList" :key="index" > 
                 <!-- erroredFileNames -->
                 File: {{ item.name }} <br> Error: <i class="errors-files-count">{{ item.error }}</i>
-                <label class='check-container'>
-                </label>
               </li>
             </ul>
           </v-card>
@@ -75,45 +76,46 @@ export default {
       expanded: false,
       showPopper: false,
       tab: null,
+      tabIndex: 1,
       filterVal: '',
       filteredFiles: [...this.filenames, ...this.erroredFileNames],
-      tabIndex: 1,
+      allToggledFiles: []
     }
   },
   computed: {
 
     filteredValidList(){
       this.showPopper = false;
-      let testarr = []
+      let filteredList = []
       let filter = this.filterVal.trim().toLowerCase()
       const containsSubStr = (element) => element.trim().toLowerCase().includes(filter)
 
       //none entered: everything stays as is
       if (!filter.length){
-          return this.filenames
+        return this.filenames
       } 
 
       //entered file is in successful list
       else if (this.filenames.some(containsSubStr)) {
         this.tabIndex = 1;
-        testarr = []
+        filteredList = []
         for (let file in this.filenames){
           if (this.filenames[file].trim().toLowerCase().includes(filter)){
-            testarr.push(this.filenames[file])
+            filteredList.push(this.filenames[file])
           }
         }
-        return testarr;
+        return filteredList;
       }
 
       else {
-        return testarr
+        return filteredList
       }
 
     },
 
     filteredErrorsList(){
       this.showPopper = false;
-      let testarr = []
+      let filteredList = []
       let filter = this.filterVal.trim().toLowerCase()
       const containsSubStrObj = (element) => element.name.trim().toLowerCase().includes(filter) 
 
@@ -124,13 +126,13 @@ export default {
         this.tabIndex = 2;
         for (let file in this.erroredFileNames){
           if (this.erroredFileNames[file].name.trim().toLowerCase().includes(filter)){
-            testarr.push({'name': this.erroredFileNames[file].name, 'error': this.erroredFileNames[file].error})
+            filteredList.push({'name': this.erroredFileNames[file].name, 'error': this.erroredFileNames[file].error})
           }
         }
-        return testarr;
+        return filteredList;
       } 
       else{
-        return testarr;
+        return filteredList;
       }
     },
 
@@ -142,31 +144,102 @@ export default {
       }
       return false
     },
+
     filesUploaded(){
-      if (this.filenames.length > 0){
+      if ((this.filenames.length > 0) || (this.erroredFileNames.length > 0)){
         return true
       }
       return false;
-    }
-    
+    },
+
   },
   methods: {
-    toggleSwc: function(fileName, index) {
-      //unload all uploaded neurons
-      for (let file in this.filenames) {
-        s.unloadNeuron(this.filenames[file]);
-      }
-      //only load the selected neuron
+    
+    multipleFiles(){
+      return (this.filenames.length > 1);
+    },
+    
+    clearVal(){
+      this.filterVal = ''
+    },
+
+    toggleAll(toggleValue){
+        for (let fileIndex in this.allToggledFiles){
+          //set their toggled status to the same as the 'toggle-all' button
+          this.allToggledFiles[fileIndex].toggled = (toggleValue ? true: false);
+          if (toggleValue){
+            this.loadToggledSwcFiles(this.allToggledFiles[fileIndex].name, this.allToggledFiles[fileIndex].swcIndex)
+          }else {
+            this.clearViewer()
+          }
+        }
+
+        let toggleElement = document.getElementsByClassName('fileToggle')
+
+        for (let el of toggleElement){ 
+          if (el.checked != toggleValue){
+            el.checked = toggleValue
+          }
+        }
+    },
+
+    loadToggledSwcFiles(fileName, index) {
       s.loadNeuron(fileName, null, this.fileData[index].parsedSwc, true, false, true);
       s.render();
     },
 
-    multipleFiles: function (){
-      return (this.filenames.length > 1);
+    clearViewer(){
+      for (let file in this.filenames) {
+        s.unloadNeuron(this.filenames[file]);
+      }
     },
 
-    clearVal(){
-      this.filterVal = ''
+    createToggleList(){
+      this.allToggledFiles = []
+      let inx = 0;
+
+      //initializes the global allToggledfiles[] obj with new toggled and swcIndex properties
+      this.allToggledFiles = this.filenames.map(fname => ({
+        name: fname,
+        toggled: true,
+        swcIndex: inx
+      })) 
+      
+      // dual object list traversals to sync corresponding swcIndex from fileData[] to allToggledFiles[]
+      for (let fileDataIndex in this.fileData) {
+        const fName = this.fileData[fileDataIndex].name
+        for (let toggledIndex in this.allToggledFiles){
+          if (fName === this.allToggledFiles[toggledIndex].name) {
+            inx = fileDataIndex
+            this.allToggledFiles[toggledIndex].swcIndex = inx;
+          }
+        }
+      }
+    },
+    
+    handleToggle(event, fileName, toggleAllEvent){
+      this.createToggleList()
+
+      if (toggleAllEvent){ //for toggling all neurons
+        const toggleVal = toggleAllEvent.target.checked
+        this.toggleAll(toggleVal)
+      }else {
+        let toggleStatus = event.target.checked;
+        let fileNameIndex = this.filenames.indexOf(fileName);
+        this.allToggledFiles[fileNameIndex].toggled = (toggleStatus ? true : false);
+        this.clearViewer()
+  
+        //reload viewer with only toggled items 
+        for (let fileIndex in this.allToggledFiles){
+          if ((this.allToggledFiles[fileIndex].toggled) && (fileIndex != fileNameIndex)) {
+            this.loadToggledSwcFiles(this.allToggledFiles[fileIndex].name, this.allToggledFiles[fileIndex].swcIndex)
+          }
+        }
+        //loads the newly toggled file last due the FIFO loading of the viewer
+        if (toggleStatus) { 
+          this.loadToggledSwcFiles(this.allToggledFiles[fileNameIndex].name, this.allToggledFiles[fileNameIndex].swcIndex)
+        }
+      }
     }
   }
 };
@@ -317,5 +390,19 @@ button {
   bottom: 50px;
   left: 125px;
 }
-
+.form-check-input{
+  position: absolute;
+  right: 15px;
+  
+}
+.form-check-input-checked-color{
+  color: red;
+}
+.valid-list{
+  margin-left: -35px;
+}
+.toggleAll{
+  position: relative;
+  left: 15px;
+}
 </style>

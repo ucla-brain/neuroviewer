@@ -3,14 +3,14 @@
     <h1>{{ msg }}</h1>
     <form @submit.prevent='submit'>
       <label>Select upload option and add files to view in the Neuroviewer: </label><br/>
-      <input v-model='uploadMethod' @click='clearData' class='upload-option' type='radio' id='file' value='file' name='uploadsel'/> <label for="file">File Upload</label><br/>
-      <input v-model='uploadMethod' @click='clearData' class='upload-option' type='radio' id='git-link' value='git-link' name='uploadsel'/> <label for="git-link"><img src='../assets/github-icon.png' class='icon'/> GitHub</label><br/>
-      <input v-model='uploadMethod' @click='clearData' class='upload-option' type='radio' id='drive-link' value='drive-link' name='uploadsel'/> <label for="drive-link"><img src='../assets/google-drive-icon.png' class='icon'/> Google Drive</label><br/>
+      <input v-model='uploadMethod' @click='clearViewer' class='upload-option' type='radio' id='file' value='file' name='uploadsel'/> <label for="file">File Upload</label><br/>
+      <input v-model='uploadMethod' @click='clearViewer' class='upload-option' type='radio' id='git-link' value='git-link' name='uploadsel'/> <label for="git-link"><img src='../assets/github-icon.png' class='icon'/> GitHub</label><br/>
+      <input v-model='uploadMethod' @click='clearViewer' class='upload-option' type='radio' id='drive-link' value='drive-link' name='uploadsel'/> <label for="drive-link"><img src='../assets/google-drive-icon.png' class='icon'/> Google Drive</label><br/>
       <Card 
         @files-added= '(event) => readSwcFile(event, null, null)'
         @url-added='(enteredVal) => readUrlFile(enteredVal)'
         @read-swc-file='(content, name) => readSwcFile(null, content,name)'
-        @clear-data= 'clearData()'
+        @clear-data= 'clearViewer()'
         @drive-file-added='(content, name) => readSwcFile(null, content, name)'
         :uploadMethod= 'uploadMethod' 
         :errored-file-names='erroredFileNames'
@@ -56,14 +56,17 @@ export default {
   },
   methods: {
 
-    clearData() {
+    clearViewer() {
       for (let file in this.filenames){
         s.unloadNeuron(this.filenames[file])
       }
-      this.urlVal = ''
-      this.filenames = []
-      this.erroredFileNames = []
-      this.clearBtn = false
+        this.urlVal = ''
+        this.filenames = []
+        this.erroredFileNames = []
+        this.clearBtn = false
+        this.fileData = []
+        this.filenames = []
+        this.erroredFileNames = []
     },
 
     eswcToSwc: function(src){
@@ -134,6 +137,10 @@ export default {
         }
         swcTxt = name.includes('.eswc') ? this.eswcToSwc(content) : content;
         this.loadSwcFile(file, swcTxt, name)
+        let swcTxtArr = swcTxt.split(/[\r\n]+/);
+        let fileObj = new File([''], name)
+        fileObj.parsedSwc = swcParser(swcTxt)
+        this.fileData.push(fileObj)
       }
       else { // for file-input upload
         this.filenames = [];

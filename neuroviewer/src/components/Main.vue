@@ -60,10 +60,13 @@ export default {
       for (let file in this.filenames){
         s.unloadNeuron(this.filenames[file])
       }
-      this.urlVal = ''
-      this.filenames = []
-      this.erroredFileNames = []
-      this.clearBtn = false
+        this.urlVal = ''
+        this.filenames = []
+        this.erroredFileNames = []
+        this.clearBtn = false
+        this.fileData = []
+        this.filenames = []
+        this.erroredFileNames = []
     },
 
     eswcToSwc: function(src){
@@ -134,6 +137,10 @@ export default {
         }
         swcTxt = name.includes('.eswc') ? this.eswcToSwc(content) : content;
         this.loadSwcFile(file, swcTxt, name)
+        let swcTxtArr = swcTxt.split(/[\r\n]+/);
+        let fileObj = new File([''], name)
+        fileObj.parsedSwc = swcParser(swcTxt)
+        this.fileData.push(fileObj)
       }
       else { // for file-input upload
         this.filenames = [];

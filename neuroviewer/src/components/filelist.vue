@@ -252,6 +252,7 @@ export default {
     margin-bottom: 30px;
     margin-left: auto;
     margin-right: auto;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
 .sel-btn{

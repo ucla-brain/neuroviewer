@@ -82,6 +82,7 @@ export default {
   name: 'Main',
   data () {
     return {
+      fileLimit: 100,
       msg: 'Welcome to Neuroviewer',
       filenames: [],
       fileData: [],
@@ -90,7 +91,6 @@ export default {
       fileinput: '',
       erroredFileNames: [],
       clearBtn: false,
-      fileurl: 'https://github.com/ucla-brain/basalganglia/blob/master/static/files/SNr_reconstructions_Figure_1.swc',
     }
   },
   methods: {
@@ -167,28 +167,40 @@ export default {
       this.clearBtn = true;
     },
 
+    fileLimitPrompt(){
+      alert( 'Warning: Neuroviewer file limit has been reached.\nOnly 100 files can be loaded at a time.\n\n\nLoading first 100 files...')
+    },
+
     readSwcFile: function(e, content, name) {
+      let fileCounter = 0;
+      let fileList = new DataTransfer();
       let swcTxt = ''
-      if (content){ //for http-url upload
+      if (content){    //for http-url upload
         let file = {
           name: name,
           parsedSwc: ''
         }
         swcTxt = name.includes('.eswc') ? this.eswcToSwc(content) : content;
         this.loadSwcFile(file, swcTxt, name)
-        let swcTxtArr = swcTxt.split(/[\r\n]+/);
         let fileObj = new File([''], name)
         fileObj.parsedSwc = swcParser(swcTxt)
         this.fileData.push(fileObj)
       }
-      else { // for file-input upload
+      else {           // for file-input upload
         this.filenames = [];
         for( let f of e.target.files ) {
           if (f) {
+            fileCounter++;
+            if (fileCounter > this.fileLimit){
+              this.fileLimitPrompt()
+              this.fileData = fileList.files
+              return;
+            }
             const r = new FileReader();
             r.onload = (e2) => {
               const swcTxt = f.name.includes('.eswc') ? this.eswcToSwc(e2.target.result) : e2.target.result;
-              this.loadSwcFile(f, swcTxt, f.name)
+              this.loadSwcFile(f, swcTxt, f.name) 
+              fileList.items.add(f)
             };
             r.readAsText(f);
           } else {

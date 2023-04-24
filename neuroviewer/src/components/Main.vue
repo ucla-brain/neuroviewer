@@ -91,6 +91,9 @@ export default {
       fileinput: '',
       erroredFileNames: [],
       clearBtn: false,
+      limitPromt: true,
+      fileCounter: 0,
+      fileList: new DataTransfer()
     }
   },
   methods: {
@@ -106,6 +109,8 @@ export default {
         this.fileData = []
         this.filenames = []
         this.erroredFileNames = []
+        this.limitPromt = true
+        this.fileCounter = 0
     },
 
     eswcToSwc: function(src){
@@ -168,30 +173,44 @@ export default {
     },
 
     fileLimitPrompt(){
-      alert( 'Warning: Neuroviewer file limit has been reached.\nOnly 100 files can be loaded at a time.\n\n\nLoading first 100 files...')
+      if (this.limitPromt){
+        alert( 'Warning: Neuroviewer file limit has been reached.\nOnly 100 files can be loaded at a time.\n\n\nLoading first 100 files...')
+        this.limitPromt = false
+      }
     },
 
     readSwcFile: function(e, content, name) {
-      let fileCounter = 0;
-      let fileList = new DataTransfer();
+      // let fileCounter = 0;
+      // let fileList = new DataTransfer();
       let swcTxt = ''
+
       if (content){    //for http-url upload
         let file = {
           name: name,
           parsedSwc: ''
         }
         swcTxt = name.includes('.eswc') ? this.eswcToSwc(content) : content;
-        this.loadSwcFile(file, swcTxt, name)
         let fileObj = new File([''], name)
         fileObj.parsedSwc = swcParser(swcTxt)
-        this.fileData.push(fileObj)
+        this.fileCounter++;
+        if (this.fileCounter > this.fileLimit){
+          if (this.limitPromt){
+            this.fileData = this.fileList.files
+          }
+          this.fileLimitPrompt()
+          return
+        } else {
+          this.loadSwcFile(file, swcTxt, name)
+          this.fileList.items.add(fileObj) 
+          this.fileData.push(fileObj)
+        }
       }
       else {           // for file-input upload
         this.filenames = [];
         for( let f of e.target.files ) {
           if (f) {
-            fileCounter++;
-            if (fileCounter > this.fileLimit){
+            this.fileCounter++;
+            if (this.fileCounter > this.fileLimit){
               this.fileLimitPrompt()
               this.fileData = fileList.files
               return;
@@ -200,7 +219,7 @@ export default {
             r.onload = (e2) => {
               const swcTxt = f.name.includes('.eswc') ? this.eswcToSwc(e2.target.result) : e2.target.result;
               this.loadSwcFile(f, swcTxt, f.name) 
-              fileList.items.add(f)
+              this.fileList.items.add(f)
             };
             r.readAsText(f);
           } else {
@@ -208,7 +227,7 @@ export default {
           }
         }    
         this.fileData = e.target.files;
-      }    
+      }
     },
 
     async readUrlFile(enteredVal){

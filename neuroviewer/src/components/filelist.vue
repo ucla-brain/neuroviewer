@@ -22,7 +22,7 @@
               <v-icon icon="mdi-file-check"></v-icon>
               [<span class="successful-files-count">{{ filteredValidList.length }}</span>]
               <div class="form-check form-switch">
-                    <input class="form-check-input toggleAll" type="checkbox" role="switch" id="flexSwitchCheckChecked" @click="handleToggle(null, null, $event)" checked>
+                    <input class="form-check-input toggleAll" type="checkbox" role="switch" id="allFlexSwitchCheckChecked" @click="handleToggle(null, null, $event)" checked>
               </div>
             </v-tab>
             <v-tab :value="2" :key="2" class="v-tab">
@@ -70,7 +70,9 @@ import Popper from 'vue3-popper';
 export default {
   components: { Popper },
   name: "filelist",
-  props:['fileData', 'filenames', 'erroredFileNames'],
+  props:['initToggle', 'fileData', 'filenames', 'erroredFileNames', 'newToggleListNeeded'],
+  // props:['fileData', 'filenames', 'erroredFileNames', 'initialToggle', 'newToggleListNeeded'],
+  emits: ['update:initToggle'],//delete this if unneeded
   data () {
     return {
       expanded: false,
@@ -79,7 +81,8 @@ export default {
       tabIndex: 1,
       filterVal: '',
       filteredFiles: [...this.filenames, ...this.erroredFileNames],
-      allToggledFiles: []
+      allToggledFiles: [],
+      // initialToggle: true,
     }
   },
   computed: {
@@ -165,17 +168,16 @@ export default {
 
     toggleAll(toggleValue){
         for (let fileIndex in this.allToggledFiles){
-          //set their toggled status to the same as the 'toggle-all' button
+          //set thetoggled status of each valid file to the same as the 'toggle-all' button
           this.allToggledFiles[fileIndex].toggled = (toggleValue ? true: false);
           if (toggleValue){
             this.loadToggledSwcFiles(this.allToggledFiles[fileIndex].name, this.allToggledFiles[fileIndex].swcIndex)
           }else {
-            this.clearViewer()
+            this.unloadViewer()
           }
         }
 
         let toggleElement = document.getElementsByClassName('fileToggle')
-
         for (let el of toggleElement){ 
           if (el.checked != toggleValue){
             el.checked = toggleValue
@@ -188,7 +190,7 @@ export default {
       s.render();
     },
 
-    clearViewer(){
+    unloadViewer(){
       for (let file in this.filenames) {
         s.unloadNeuron(this.filenames[file]);
       }
@@ -218,24 +220,40 @@ export default {
     },
     
     handleToggle(event, fileName, toggleAllEvent){
-      this.createToggleList()
+      //initialize required data
+      let allItemsToggledOff = true;
 
-      if (toggleAllEvent){ //for toggling all neurons
+      let toggleAllBtn = document.getElementById('allFlexSwitchCheckChecked')
+      if (this.initToggle){ 
+        this.createToggleList()
+        this.$emit('update:initToggle', false)
+      }
+
+      if (toggleAllEvent){ //for toggling all neurons at once
         const toggleVal = toggleAllEvent.target.checked
         this.toggleAll(toggleVal)
-      }else {
+      }else {               //single-neuron toggling
         let toggleStatus = event.target.checked;
         let fileNameIndex = this.filenames.indexOf(fileName);
         this.allToggledFiles[fileNameIndex].toggled = (toggleStatus ? true : false);
-        this.clearViewer()
-  
+        this.unloadViewer()
+
         //reload viewer with only toggled items 
         for (let fileIndex in this.allToggledFiles){
           if ((this.allToggledFiles[fileIndex].toggled) && (fileIndex != fileNameIndex)) {
             this.loadToggledSwcFiles(this.allToggledFiles[fileIndex].name, this.allToggledFiles[fileIndex].swcIndex)
           }
+          if (this.allToggledFiles[fileIndex].toggled){
+            allItemsToggledOff = false;
+          } 
         }
-        //loads the newly toggled file last due the FIFO loading of the viewer
+        if (allItemsToggledOff) {
+            toggleAllBtn.checked = false
+        } else {
+          toggleAllBtn.checked = true
+        }
+
+        //loads the newly toggled-on file at the end, due the FIFO loading style of the viewer
         if (toggleStatus) { 
           this.loadToggledSwcFiles(this.allToggledFiles[fileNameIndex].name, this.allToggledFiles[fileNameIndex].swcIndex)
         }
@@ -252,6 +270,7 @@ export default {
     margin-bottom: 30px;
     margin-left: auto;
     margin-right: auto;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
 .sel-btn{

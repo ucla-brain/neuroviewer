@@ -181,12 +181,14 @@ let octoKitGlobal = undefined
 import { Buffer } from 'buffer';
 
 export default {
-  emits: ['files-added', 'url-added', 'drive-file-added', 'clear-data', 'read-swc-file'],
+  emits: ['files-added', 'url-added', 'drive-file-added', 'clear-data', 'read-swc-file', 'limitPrompt'],
   components: { Popper },
   name: "filelist",
-  props:['uploadMethod', 'clearBtn', 'urlVal', 'erroredFileNames'],
+  props:['uploadMethod', 'clearBtn', 'urlVal', 'erroredFileNames', 'fileLimit'],
   data (){
       return{
+        driveFileCount: 0,
+
         //refers to google-drive
         isAuthenticated: false,
         
@@ -263,7 +265,11 @@ export default {
     },
 
     driveFileUploaded(content, name){
-      this.$emit('drive-file-added', content, name)
+      if (this.driveFileCount < this.fileLimit){
+        this.driveFileCount++;
+        this.$emit('drive-file-added', content, name)
+        this.$emit('limitPrompt')
+      }
     },
 
     clearPress(method) {

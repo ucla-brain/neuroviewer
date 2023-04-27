@@ -12,10 +12,12 @@
         @read-swc-file='(content, name) => readSwcFile(null, content,name)'
         @clear-data= 'clearViewer()'
         @drive-file-added='(content, name) => readSwcFile(null, content, name)'
+        @limitPrompt='fileLimitPrompt()'
         :uploadMethod= 'uploadMethod' 
         :errored-file-names='erroredFileNames'
         :clearBtn= 'clearBtn'
-        :urlVal= 'urlVal'>
+        :urlVal= 'urlVal'
+        :fileLimit='fileLimit'>
       </Card>
     </form>
     <!-- <label>URL:</label><input v-model="fileurl" @keyup="readUrlFile" placeholder="fileurl" size="95" /> -->
@@ -61,9 +63,11 @@
     <div id="container" style='position:relative; width:100%; height:700px'> 
     </div>
     <filelist 
+      v-model:initToggle="initialToggle"
       :fileData="fileData" 
       :filenames="filenames"
-      :erroredFileNames="erroredFileNames">
+      :erroredFileNames="erroredFileNames"
+      :newToggleListNeeded="newToggleListNeeded">
     </filelist> 
   </div>
 </template>
@@ -91,9 +95,11 @@ export default {
       fileinput: '',
       erroredFileNames: [],
       clearBtn: false,
-      limitPromt: true,
+      limitPrompt: true,
       fileCounter: 0,
-      fileList: new DataTransfer()
+      initialToggle: true,
+      newFileCheck: '',
+            fileList: new DataTransfer(),
     }
   },
   methods: {
@@ -106,11 +112,24 @@ export default {
         this.filenames = []
         this.erroredFileNames = []
         this.clearBtn = false
+        if (this.fileData.length > 0){
+          this.newToggleListNeeded(false)
+          if (this.newFileCheck != this.fileData[0].name){
+            this.initialToggle = true
+          }
+          this.newFileCheck = this.fileData[0].name
+        }else {
+          this.initialToggle = true
+        }
         this.fileData = []
         this.filenames = []
         this.erroredFileNames = []
-        this.limitPromt = true
+        this.limitPrompt = true
         this.fileCounter = 0
+    },
+
+    newToggleListNeeded(newValue) {
+      this.initialToggle = newValue;
     },
 
     eswcToSwc: function(src){
@@ -173,15 +192,13 @@ export default {
     },
 
     fileLimitPrompt(){
-      if (this.limitPromt){
-        alert( 'Warning: Neuroviewer file limit has been reached.\nOnly 100 files can be loaded at a time.\n\n\nLoading first 100 files...')
-        this.limitPromt = false
+      if (this.limitPrompt){
+        alert( 'Warning: Neuroviewer file limit has been reached.\nOnly 100 files can be loaded at a time.\n\n\nLoading first 100 valid files...')
+        this.limitPrompt = false
       }
     },
 
     readSwcFile: function(e, content, name) {
-      // let fileCounter = 0;
-      // let fileList = new DataTransfer();
       let swcTxt = ''
 
       if (content){    //for http-url upload
@@ -194,7 +211,7 @@ export default {
         fileObj.parsedSwc = swcParser(swcTxt)
         this.fileCounter++;
         if (this.fileCounter > this.fileLimit){
-          if (this.limitPromt){
+          if (this.limitPrompt){
             this.fileData = this.fileList.files
           }
           this.fileLimitPrompt()
@@ -212,7 +229,7 @@ export default {
             this.fileCounter++;
             if (this.fileCounter > this.fileLimit){
               this.fileLimitPrompt()
-              this.fileData = fileList.files
+              this.fileData = this.fileList.files
               return;
             }
             const r = new FileReader();

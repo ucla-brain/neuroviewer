@@ -70,7 +70,9 @@ import Popper from 'vue3-popper';
 export default {
   components: { Popper },
   name: "filelist",
-  props:['fileData', 'filenames', 'erroredFileNames'],
+  props:['initToggle', 'fileData', 'filenames', 'erroredFileNames', 'newToggleListNeeded'],
+  // props:['fileData', 'filenames', 'erroredFileNames', 'initialToggle', 'newToggleListNeeded'],
+  emits: ['update:initToggle'],//delete this if unneeded
   data () {
     return {
       expanded: false,
@@ -80,7 +82,7 @@ export default {
       filterVal: '',
       filteredFiles: [...this.filenames, ...this.erroredFileNames],
       allToggledFiles: [],
-      initialToggle: true,
+      // initialToggle: true,
     }
   },
   computed: {
@@ -171,7 +173,7 @@ export default {
           if (toggleValue){
             this.loadToggledSwcFiles(this.allToggledFiles[fileIndex].name, this.allToggledFiles[fileIndex].swcIndex)
           }else {
-            this.clearViewer()
+            this.unloadViewer()
           }
         }
 
@@ -188,7 +190,7 @@ export default {
       s.render();
     },
 
-    clearViewer(){
+    unloadViewer(){
       for (let file in this.filenames) {
         s.unloadNeuron(this.filenames[file]);
       }
@@ -220,12 +222,12 @@ export default {
     handleToggle(event, fileName, toggleAllEvent){
       //initialize required data
       let allItemsToggledOff = true;
+
       let toggleAllBtn = document.getElementById('allFlexSwitchCheckChecked')
-      if (this.initialToggle){
+      if (this.initToggle){ 
         this.createToggleList()
-        this.initialToggle = false;
+        this.$emit('update:initToggle', false)
       }
-      
 
       if (toggleAllEvent){ //for toggling all neurons at once
         const toggleVal = toggleAllEvent.target.checked
@@ -234,7 +236,7 @@ export default {
         let toggleStatus = event.target.checked;
         let fileNameIndex = this.filenames.indexOf(fileName);
         this.allToggledFiles[fileNameIndex].toggled = (toggleStatus ? true : false);
-        this.clearViewer()
+        this.unloadViewer()
 
         //reload viewer with only toggled items 
         for (let fileIndex in this.allToggledFiles){

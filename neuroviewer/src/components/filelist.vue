@@ -8,7 +8,7 @@
           </template>
         </Popper>
         <v-icon icon="mdi-close" class="clearIcon" @click="clearVal" v-if="filterVal.length"></v-icon>
-        <input type="search" class="searchBar" list="filesList" v-model="filterVal" placeholder="Filter files by name or path">
+        <input @keydown="syncFileList()" type="search" class="searchBar" list="filesList" v-model="filterVal" placeholder="Filter files by name or path">
       </div>
 
       <div class="tab-bar list-group" v-if="filesUploaded">
@@ -42,7 +42,7 @@
                 <span class="valid-list">
                   Loaded ..... {{ item }} 
                 </span>
-                <input class="form-check-input fileToggle" type="checkbox" role="switch" id="flexSwitchCheckChecked"  @click="handleToggle($event, item, null)" checked>
+                <input class="form-check-input fileToggle" type="checkbox" role="switch" :id="'flexSwitchCheckChecked'+index"  @click="handleToggle($event, item, null)" checked>
               </div>
             </li>
             </ul>
@@ -71,8 +71,7 @@ export default {
   components: { Popper },
   name: "filelist",
   props:['initToggle', 'fileData', 'filenames', 'erroredFileNames', 'newToggleListNeeded'],
-  // props:['fileData', 'filenames', 'erroredFileNames', 'initialToggle', 'newToggleListNeeded'],
-  emits: ['update:initToggle'],//delete this if unneeded
+  emits: ['update:initToggle'],
   data () {
     return {
       expanded: false,
@@ -82,7 +81,6 @@ export default {
       filterVal: '',
       filteredFiles: [...this.filenames, ...this.erroredFileNames],
       allToggledFiles: [],
-      // initialToggle: true,
     }
   },
   computed: {
@@ -157,6 +155,35 @@ export default {
 
   },
   methods: {
+
+    syncFileList() { 
+      const config = { attributes: true, childList: true, subtree: true}
+      const callback  = (mutationList, observer) => {
+        for (const mutation of mutationList) {
+          if (mutation.type === "childList") {  
+            //Executes when list is filtered from search bar 
+            for (let item in this.filteredValidList){
+              let elementID = 'flexSwitchCheckChecked' + item
+              let toggleElement = document.getElementById(elementID)
+              let allToggledFileIndex = this.allToggledFiles.findIndex(obj => obj.name === this.filteredValidList[item])
+
+              if (toggleElement.checked != this.allToggledFiles[allToggledFileIndex].toggled) { 
+                toggleElement.checked = !toggleElement.checked
+              }
+            }
+          }
+        }
+      };
+      const observer = new MutationObserver(callback);
+
+      if (this.initToggle) { 
+        this.createToggleList()
+        this.$emit('update:initToggle', false)
+      }
+  
+      let validFilesListNode = document.getElementsByClassName('list-group')
+      observer.observe(validFilesListNode[1], config)
+    },
     
     multipleFiles(){
       return (this.filenames.length > 1);
@@ -164,6 +191,7 @@ export default {
     
     clearVal(){
       this.filterVal = ''
+      this.syncFileList()
     },
 
     toggleAll(toggleValue){
@@ -222,17 +250,17 @@ export default {
     handleToggle(event, fileName, toggleAllEvent){
       //initialize required data
       let allItemsToggledOff = true;
-
       let toggleAllBtn = document.getElementById('allFlexSwitchCheckChecked')
-      if (this.initToggle){ 
+      
+      if (this.initToggle) { 
         this.createToggleList()
         this.$emit('update:initToggle', false)
       }
 
-      if (toggleAllEvent){ //for toggling all neurons at once
+      if (toggleAllEvent) { //for toggling all neurons at once
         const toggleVal = toggleAllEvent.target.checked
         this.toggleAll(toggleVal)
-      }else {               //single-neuron toggling
+      } else {               //single-neuron toggling
         let toggleStatus = event.target.checked;
         let fileNameIndex = this.filenames.indexOf(fileName);
         this.allToggledFiles[fileNameIndex].toggled = (toggleStatus ? true : false);

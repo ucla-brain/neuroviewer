@@ -471,6 +471,8 @@ export default {
   border: 1px solid gray;
   box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
   position: absolute;
+  top: 115px;
+  left: 200px;
   z-index: 1;
   background-color: white;
 }

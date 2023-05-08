@@ -14,6 +14,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import Popper from "vue3-popper";
 
 const vuetify = createVuetify({
     components,
@@ -21,12 +22,12 @@ const vuetify = createVuetify({
 })
 
 
-const app = createApp(App)
 console.log('App is building...')
+const app = createApp(App)
 app.use(router)
 app.use(BootstrapVue3)
 app.use(vuetify)
-console.log('App is being built using bootstrap-vue-3')
+app.use(Popper)
 app.mount('#app')
 console.log('App successfully mounted')
 

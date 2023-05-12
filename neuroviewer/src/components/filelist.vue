@@ -70,7 +70,7 @@ import Popper from 'vue3-popper';
 export default {
   components: { Popper },
   name: "filelist",
-  props:['initToggle', 'fileData', 'filenames', 'erroredFileNames', 'newToggleListNeeded'],
+  props:['initToggle', 'fileData', 'filenames', 'erroredFileNames', 'newToggleListNeeded', 'viewerLock'],
   emits: ['update:initToggle'],
   data () {
     return {
@@ -214,7 +214,7 @@ export default {
     },
 
     loadToggledSwcFiles(fileName, index) {
-      s.loadNeuron(fileName, null, this.fileData[index].parsedSwc, true, false, true);
+      s.loadNeuron(fileName, null, this.fileData[index].parsedSwc, this.viewerLock, false, true); 
       s.render();
     },
 

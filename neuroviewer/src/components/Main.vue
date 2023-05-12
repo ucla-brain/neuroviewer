@@ -62,12 +62,15 @@
 
     <div id="container" style='position:relative; width:100%; height:700px'> 
     </div>
+    <input type="checkbox" id="viewerLock" @click="lockViewer($event)" class="viewerLock"/>
+    <label for="viewerLock">Lock Viewer Position</label>
     <filelist 
       v-model:initToggle="initialToggle"
       :fileData="fileData" 
       :filenames="filenames"
       :erroredFileNames="erroredFileNames"
-      :newToggleListNeeded="newToggleListNeeded">
+      :newToggleListNeeded="newToggleListNeeded"
+      :viewerLock="viewerLock">
     </filelist> 
   </div>
 </template>
@@ -99,33 +102,39 @@ export default {
       fileCounter: 0,
       initialToggle: true,
       newFileCheck: '',
-            fileList: new DataTransfer(),
+      fileList: new DataTransfer(),
+      viewerLock: true
     }
   },
   methods: {
-
+    
     clearViewer() {
       for (let file in this.filenames){
         s.unloadNeuron(this.filenames[file])
       }
-        this.urlVal = ''
-        this.filenames = []
-        this.erroredFileNames = []
-        this.clearBtn = false
-        if (this.fileData.length > 0){
-          this.newToggleListNeeded(false)
-          if (this.newFileCheck != this.fileData[0].name){
-            this.initialToggle = true
-          }
-          this.newFileCheck = this.fileData[0].name
-        }else {
+      this.urlVal = ''
+      this.filenames = []
+      this.erroredFileNames = []
+      this.clearBtn = false
+      if (this.fileData.length > 0){
+        this.newToggleListNeeded(false)
+        if (this.newFileCheck != this.fileData[0].name){
           this.initialToggle = true
         }
-        this.fileData = []
-        this.filenames = []
-        this.erroredFileNames = []
-        this.limitPrompt = true
-        this.fileCounter = 0
+        this.newFileCheck = this.fileData[0].name
+      }else {
+        this.initialToggle = true
+      }
+      this.fileData = []
+      this.filenames = []
+      this.erroredFileNames = []
+      this.limitPrompt = true
+      this.fileCounter = 0
+    },
+    
+    lockViewer(e){
+      let val = e.target.checked
+      this.viewerLock = !val;
     },
 
     newToggleListNeeded(newValue) {
@@ -181,7 +190,7 @@ export default {
       const swc = swcParser(swcTxt);
       file.parsedSwc = swc;
       if (Object.keys(swc).length > 0) {
-        s.loadNeuron(name, null, swc, true, false, true);
+        s.loadNeuron(name, null, swc, this.viewerLock, false, true);
         s.render();
         this.filenames.push(name);
       } else {
@@ -399,5 +408,9 @@ h6{
 }
 .ctrl-one, .ctrl-two, .ctrl-three{
   margin: auto;
+}
+.viewerLock{
+  margin-left: 6%;
+  transform: scale(1.2);
 }
 </style>

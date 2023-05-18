@@ -1,11 +1,27 @@
 <template>
 
   <!-- FILE UPLOAD -->
-  <div class='method-card' v-if='uploadMethod==="file"'>
-      <span class='row'>
+  <div class='method-card file-card' v-if='uploadMethod==="file"'>
+      <span class='row file-section'>
         <label class='cell' for='swc_input'>Upload <i>.swc</i> or <i>.eswc</i> file(s) directly to viewer: </label>
         <input class='file-input' type='file' ref='fileInput' @click="clearPress" accept='.eswc, .swc' @change="filesUploaded"  name='swc_input' id='swc_input' multiple/>
         <!-- <br/><br/> -->
+      </span>
+      <div class="card-separator">
+      </div>
+      <span class="file-section">
+        <label class="folder-label">Upload folder(s) via drag and drop:</label>
+        <div class="drag-drop-zone" 
+          @dragenter.prevent
+          @dragover.prevent = "drag=true"
+          @dragleave.prevent = "drag=false"
+          :class="{style : drag}"
+          @click="folderClicked" 
+          @change="filesUploaded" 
+          @drop="folderDopped($event)">
+          <input id="drag-drop-upload" class="hidden" type="file" webkitdirectory/>
+          <v-icon icon="mdi-folder-arrow-up-outline" class="upload-icon"></v-icon>
+        </div>
       </span>
       <input class='clear-btn file-clear' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
   </div>
@@ -196,6 +212,7 @@ export default {
         tokenEntered: false,
         tokenValid: false,
         hasGitAccess: false,
+        drag: false
       }
   },
   mounted() {    
@@ -220,6 +237,70 @@ export default {
     initializeAPIGlobals();
   }, 
   methods: {
+    
+    async getFolderFiles(dataTransferItemList){
+      let files = [];
+      let queue = [];
+      for (let i = 0; i < dataTransferItemList.length; i++) {
+        queue.push(dataTransferItemList[i].webkitGetAsEntry());
+      }
+      while (queue.length > 0) {
+        let folderItem = queue.shift();
+        if (folderItem.isFile) {
+          files.push(folderItem);
+        } else if (folderItem.isDirectory) {
+          queue.push(...await this.getSubFolderContent(folderItem.createReader()));
+        }
+      }
+      return files;
+    },
+
+    async  getSubFolderContent(directoryReader) {
+        let subFiles = [];
+        let readSubFiles = await this.returnFiles(directoryReader);
+        while (readSubFiles.length > 0) {
+          subFiles.push(...readSubFiles);
+          readSubFiles = await this.returnFiles(directoryReader);
+        }
+        return subFiles;
+      },
+
+    async returnFiles(directoryReader) {
+      try {
+        return await new Promise((resolve, reject) => {
+          directoryReader.readEntries(resolve, reject);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async folderDopped(e){
+      this.$emit('clear-data')
+      this.drag = false
+      let tempEventObj = {
+        target: {
+          files: [],
+          length: 0
+        }
+      }
+      e.preventDefault();
+      let items = await this.getFolderFiles(e.dataTransfer.items)
+      .then((items) => {
+        items.forEach((item, index, array) => {
+          item.file((file)=>{
+            if (file.name.includes('swc')){
+              tempEventObj.target.files.push(file)
+              tempEventObj.target.length += 1;
+              if (index === array.length-1){
+                this.filesUploaded(tempEventObj)
+              }
+            }
+          })
+        })
+      })
+    },
+
     filesUploaded(event){
       this.$emit('files-added', event)
     },
@@ -256,6 +337,11 @@ export default {
       } else {
         alert('Please use a valid github URL')
       }
+    },
+
+    folderClicked(){
+      const folderInput = document.getElementById('drag-drop-upload')
+      folderInput.click()
     },
 
     urlUploaded(enteredUrl) {
@@ -475,6 +561,66 @@ export default {
   left: 200px;
   z-index: 1;
   background-color: white;
+}
+.style{
+  background-color: #57B839;
+  color: white;
+}
+.card-separator{
+  border-left: 1px solid rgba(128, 128, 128, 0.379);
+  height: 85px;
+}
+.file-card{
+  border: 2px solid gray;
+  height: 105px;
+  min-width: 800px;
+  max-width: 1000px;
+  display: flex;
+}
+.file-section {
+  flex: 49%;
+}
+.drag-drop-zone {
+  top: calc(30% + 5px);
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px dotted gray;
+  border-radius: 5px;
+  height: 60%;
+  width: 70%;
+  max-width: 350px;
+}
+.drag-drop-input{
+  display: none;
+  border: 2px solid green;
+  margin-left: -12px;
+  width: 120%;
+  height: 100%;
+}
+.upload-icon {
+  font-size: 2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  top: 10%;
+}
+.folder-label {
+  padding-left: 10px;
+  text-align: center;
+  width: 100%;
+}
+.hidden {
+  border: 2px solid green;
+  display: none;
+}
+.file-input {
+  margin-top: -20px;
+}
+.file-clear {
+  position: absolute;
+  left: 10px;
+  bottom: 5%;
 }
 .cell {
   flex: 1 1;

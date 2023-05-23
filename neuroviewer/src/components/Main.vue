@@ -202,7 +202,7 @@ export default {
 
     fileLimitPrompt(){
       if (this.limitPrompt){
-        alert( 'Warning: Neuroviewer file limit has been reached.\nOnly 100 files can be loaded at a time.\n\n\nLoading first 100 valid files...')
+        alert( 'Warning: Neuroviewer file limit has been reached.\nOnly ' + this.fileLimit + ' files can be loaded at a time.\n\n\nLoading first ' + this.fileLimit + ' valid files...')
         this.limitPrompt = false
       }
     },
@@ -236,23 +236,24 @@ export default {
         for( let f of e.target.files ) {
           if (f) {
             this.fileCounter++;
-            if (this.fileCounter > this.fileLimit){
+            if (this.fileCounter > this.fileLimit) {
               this.fileLimitPrompt()
-              this.fileData = this.fileList.files
-              return;
             }
             const r = new FileReader();
             r.onload = (e2) => {
               const swcTxt = f.name.includes('.eswc') ? this.eswcToSwc(e2.target.result) : e2.target.result;
               this.loadSwcFile(f, swcTxt, f.name) 
               this.fileList.items.add(f)
+              this.fileData.push(f)
             };
-            r.readAsText(f);
+            if (this.fileCounter<=this.fileLimit){
+              r.readAsText(f);
+            }
           } else {
             alert("Failed to load file " + f.name);
           }
         }    
-        this.fileData = e.target.files;
+
       }
     },
 

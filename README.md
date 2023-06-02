@@ -15,11 +15,6 @@ This is a SPA written in Vue to visualize neuronal reconstruction files in a SWC
 
 https://brain.neurobio.ucla.edu/neuroviewer/
 
-
-[![UCLA B.R.A.I.N.](http://brain.neurobio.ucla.edu/images/Logo%209-a2small.png)](http://brain.neurobio.ucla.edu/)
-
-[UCLA B.R.A.I.N.](http://brain.neurobio.ucla.edu/)
-
 ## Contributors
 - Christian Estrada
 - Seita Yamashita

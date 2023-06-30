@@ -54,12 +54,12 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            sudo docker container stop ${{ env.DOCKER_CONTAINER }}
-            sudo docker container rm ${{ env.DOCKER_CONTAINER }}
-            sudo docker system prune -a -f
-            sudo docker build -t ${{ env.DOCKER_IMAGE }} $${{ secrets.BASE_DIR }}/temp/neuroviewer/
-            sudo docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 3602:3602 -e TZ=America/Los_Angeles -v /src/neuroviewer-app:/app --restart=always ${{ env.DOCKER_IMAGE }}
-            # sudo docker container ls -a
+            docker container stop ${{ env.DOCKER_CONTAINER }}
+            docker container rm ${{ env.DOCKER_CONTAINER }}
+            docker system prune -a -f
+            docker build -t ${{ env.DOCKER_IMAGE }} $${{ secrets.BASE_DIR }}/temp/neuroviewer/
+            docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 3602:3602 -e TZ=America/Los_Angeles -v /src/neuroviewer-app:/app --restart=always ${{ env.DOCKER_IMAGE }}
+            # docker container ls -a
 
   slack:
     runs-on: ubuntu-latest

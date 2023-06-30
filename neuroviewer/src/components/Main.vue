@@ -106,6 +106,28 @@ export default {
       viewerLock: true
     }
   },
+  mounted: function () {
+    /* global sharkViewer */
+    let s = null;
+    let mdata;
+
+    const swc = swcParser(require('../assets/example_neuron.txt').default)
+    mdata = JSON.parse(document.getElementById("metadata_swc").text);
+    s = new SharkViewer({
+      animated: false,
+      mode: 'particle',
+      dom_element: document.getElementById('container'),
+      metadata: mdata,
+      showAxes: 10000,
+      maxVolumeSize: 5000,
+      cameraChangeCallback: () => { }
+    });
+    window.s = s;
+    s.init();
+    s.animate();
+    s.loadNeuron('swc', null, swc, true, false, true);
+    s.render();
+  },
   methods: {
     
     clearViewer() {
@@ -287,29 +309,36 @@ export default {
       }
     },
 
-    window:onload = () => {
-      /* global sharkViewer */
-      let s = null;
-      let mdata;
+    // window:onload = () => {
+    //   try {
+    //     /* global sharkViewer */
+    //     let s = null;
+    //     let mdata;
+  
+    //     const swc = swcParser(require('../assets/example_neuron.txt').default)
+    //     // console.log(swc)
+    //     // const swc = swcParser(document.getElementById("swc").text);
+    //     mdata = JSON.parse(document.getElementById("metadata_swc").text);
+    //     s = new SharkViewer({
+    //       animated: false,
+    //       mode: 'particle',
+    //       dom_element: document.getElementById('container'),
+    //       metadata: mdata,
+    //       showAxes: 10000,
+    //       maxVolumeSize: 5000,
+    //       cameraChangeCallback: () => { }
+    //     });
+    //     window.s = s;
+    //     s.init();
+    //     s.animate();
+    //     s.loadNeuron('swc', null, swc, true, false, true);
+    //     s.render();
+    //   }
+    //   catch {
+    //     console.log('error')
+    //   }
 
-      const swc = swcParser(document.getElementById("swc").text);
-      mdata = JSON.parse(document.getElementById("metadata_swc").text);
-      s = new SharkViewer({
-        animated: false,
-        mode: 'particle',
-        dom_element: document.getElementById('container'),
-        metadata: mdata,
-        showAxes: 10000,
-        maxVolumeSize: 5000,
-        cameraChangeCallback: () => { }
-      });
-      window.s = s;
-      s.init();
-      s.animate();
-      s.loadNeuron('swc', null, swc, true, false, true);
-      s.render();
-
-    },
+    // },
 
     toggleDiv: function(val) {
       if (val==='vid'){

@@ -27,6 +27,7 @@ jobs:
             npm install
             sed -i 's/<DRIVE_API_KEY>/${{ secrets.DRIVE_API_KEY }}/g' config/prod.env.js
             sed -i 's/<DRIVE_CLIENT_ID>/${{ secrets.DRIVE_CLIENT_ID }}/g' config/prod.env.js
+            sed -i 's/<SERVER_PASS>/${{ secrets.SERVER_PASS }}/g' config/prod.env.js
             CI=false npm run build
 
         - name: scp build files to main host

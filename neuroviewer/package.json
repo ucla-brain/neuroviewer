@@ -25,7 +25,7 @@
     "bootstrap-vue-3": "^0.1.21",
     "buffer": "^6.0.3",
     "file-loader": "^6.2.0",
-    "octokit": "^2.0.14",
+    "octokit": "^3.1.2",
     "storage-helper": "^1.4.1",
     "url-loader": "^4.1.1",
     "vue": "^3.2.37",

@@ -59,7 +59,7 @@ jobs:
             docker container rm ${{ env.DOCKER_CONTAINER }}
             docker system prune -a -f
             docker build -t ${{ env.DOCKER_IMAGE }} $${{ secrets.BASE_DIR }}/temp/neuroviewer/
-            docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 8000:3602 -e TZ=America/Los_Angeles -v /src/neuroviewer-app:/app --restart=always ${{ env.DOCKER_IMAGE }}
+            docker run -dit --name ${{ env.DOCKER_CONTAINER }} -p 8000:8000 -e TZ=America/Los_Angeles -v /src/neuroviewer-app:/app --restart=always ${{ env.DOCKER_IMAGE }}
             # docker container ls -a
 
   slack:

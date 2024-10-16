@@ -21,7 +21,6 @@
     "@janelia/sharkviewer": "^1.7.10",
     "@mdi/font": "^7.1.96",
     "@octokit/core": "^4.2.0",
-    "bootstrap-vue": "^2.22.0",
     "bootstrap-vue-3": "^0.1.21",
     "buffer": "^6.0.3",
     "file-loader": "^6.2.0",

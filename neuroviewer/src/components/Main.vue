@@ -36,22 +36,30 @@
               </div>
               <div class="ctrl-keys">
                 <h6>Controls</h6>
-                <p ><div class="arrow-keys">
-                  <v-icon class="up-arrow-key" icon="mdi-arrow-up-bold-box-outline"></v-icon>
-                  <v-icon icon="mdi-arrow-left-bold-box-outline"></v-icon>
-                  <v-icon icon="mdi-arrow-down-bold-box-outline"></v-icon>
-                  <v-icon icon="mdi-arrow-right-bold-box-outline"></v-icon>
-                </div>[<i>Arrow Keys</i>] <br>or<br> 
-                <v-icon icon="mdi-cursor-default-gesture" class="drag-key" size="30px"></v-icon><br>
-                [<i>(hold) Option + Click + Drag</i>]</p>
-                <p ><v-icon icon="mdi-cursor-default-gesture" class="drag-key" size="30px"></v-icon><br>
-                  [<i>Click + Drag</i>]</p>
-                <p >
-                <v-icon icon="mdi-mouse"></v-icon>
-                <v-icon icon="mdi-arrow-up-down"></v-icon><br>
-                [scroll wheel] <br> or <br>
-                <v-icon icon="mdi-gesture-pinch" size="30px"></v-icon><br>
-                [Touch-Pad pinch]</p>
+                <span >
+                  <div class="arrow-keys">
+                    <v-icon class="up-arrow-key" icon="mdi-arrow-up-bold-box-outline"></v-icon>
+                    <v-icon icon="mdi-arrow-left-bold-box-outline"></v-icon>
+                    <v-icon icon="mdi-arrow-down-bold-box-outline"></v-icon>
+                    <v-icon icon="mdi-arrow-right-bold-box-outline"></v-icon>
+                  </div>
+                  [<i>Arrow Keys</i>] 
+                  <br>or<br> 
+                  <v-icon icon="mdi-cursor-default-gesture" class="drag-key" size="30px"></v-icon>
+                  <br>
+                  [<i>(hold) Option + Click + Drag</i>]
+                </span>
+                <span >
+                  <v-icon icon="mdi-cursor-default-gesture" class="drag-key" size="30px"></v-icon><br>
+                  [<i>Click + Drag</i>]
+                </span>
+                <span>
+                  <v-icon icon="mdi-mouse"></v-icon>
+                  <v-icon icon="mdi-arrow-up-down"></v-icon><br>
+                  [scroll wheel] <br> or <br>
+                  <v-icon icon="mdi-gesture-pinch" size="30px"></v-icon><br>
+                  [Touch-Pad pinch]
+                </span>
               </div>
             </div>
             <p class="ctrls-footer">[option+click] and [right-click] are interchangeable for touch-pad and mouse respectively</p>
@@ -411,7 +419,7 @@ h6{
   grid-template-rows: 0.5fr 2fr 1fr 1.6fr;
   gap: 5px;
 }
-.ctrl-keys > p{
+.ctrl-keys > span{
   border-left: 1px solid rgba(91, 91, 91, 0.7);
 }
 .arrow-keys{

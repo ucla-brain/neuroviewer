@@ -6,7 +6,6 @@ import test1 from '../components/test1.vue'
 import test2 from '../components/test2.vue'
 import test3 from '../components/test3.vue'
 import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 const routes = [
   {

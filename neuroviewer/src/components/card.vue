@@ -118,7 +118,19 @@
     </span>
     <span class='row'>
       <label class='cell' for='url_input'>Enter Google Drive URL: </label>
-      <input class='cell url-input' type='url' ref='driveInput' placeholder="https://drive.google.com/file/file-ID" pattern="https?://.+" :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" :disabled="!isAuthenticated" required name='url_input' v-model='urlVal' id='url_input' @change='checkDriveURL'/> 
+      <input 
+      class='cell url-input' 
+      type='url' 
+      ref='driveInput' 
+      placeholder="https://drive.google.com/file/file-ID" 
+      pattern="https?://.+" 
+      :style="{'background-color': isAuthenticated ? 'white' : 'darkgray'}" 
+      :disabled="!isAuthenticated" 
+      required name='url_input' 
+      :modelValue='urlVal'
+      @update:modelValue='urlVal'
+      id='url_input' 
+      @change='checkDriveURL'/>
     </span>
       <input class='clear-btn drive-clear' type='button' value='Clear Data' v-show='clearBtn' @click='clearPress'/>
     <Popper>

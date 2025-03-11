@@ -19,7 +19,7 @@ https://brain.neurobio.ucla.edu/neuroviewer/
 - Christian Estrada
 - Seita Yamashita
 
-[![UCLA B.R.A.I.N.](http://brain.neurobio.ucla.edu/images/Logo%209-a2small.png)](http://brain.neurobio.ucla.edu/)
+[![UCLA B.R.A.I.N.](https://uclabrain.org/wp-content/uploads/2024/12/logo-9-a2small.png)](http://brain.neurobio.ucla.edu/)
 
 [UCLA B.R.A.I.N.](http://brain.neurobio.ucla.edu/)
 

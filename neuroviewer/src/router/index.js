@@ -13,7 +13,8 @@ const routes = [
     name: 'Main',
     component: Main,
     meta: {
-      requiresAuth: true
+      // Toggle password protection 
+      requiresAuth: false
     }  
   },
   {
